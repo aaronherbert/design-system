@@ -1,0 +1,94 @@
+.ds-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: var(--ds-space-8);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-full);
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+  line-height: var(--ds-leading-tight);
+  vertical-align: middle;
+}
+
+.ds-tag--sm {
+  min-height: var(--ds-space-6);
+  font-size: var(--ds-text-xs);
+}
+
+.ds-tag--neutral {
+  background: var(--ds-color-surface-sunken);
+  color: var(--ds-color-text);
+}
+
+.ds-tag--primary {
+  background: var(--ds-color-primary-subtle);
+  border-color: transparent;
+  color: var(--ds-color-primary-text);
+}
+
+.ds-tag__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-inline: var(--ds-space-3);
+}
+
+.ds-tag--sm .ds-tag__label {
+  padding-inline: var(--ds-space-2);
+}
+
+.ds-tag--removable .ds-tag__label {
+  padding-inline-end: var(--ds-space-1);
+}
+
+.ds-tag__label--button,
+.ds-tag__remove {
+  align-self: stretch;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--ds-radius-full);
+  transition: background-color var(--ds-duration-fast) var(--ds-ease);
+}
+
+.ds-tag__label--button {
+  min-height: var(--ds-space-6);
+  font: inherit;
+}
+
+.ds-tag__label--button:hover,
+.ds-tag__remove:hover {
+  background: var(--ds-color-surface-hover);
+}
+
+.ds-tag--primary .ds-tag__label--button:hover,
+.ds-tag--primary .ds-tag__remove:hover {
+  background: color-mix(in srgb, var(--ds-color-primary) 16%, transparent);
+}
+
+.ds-tag__label--button:focus-visible,
+.ds-tag__remove:focus-visible {
+  outline: 2px solid var(--ds-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-tag__remove {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  min-width: var(--ds-space-6);
+  min-height: var(--ds-space-6);
+  margin-inline-end: var(--ds-space-1);
+  padding: 0;
+  color: var(--ds-color-text-muted);
+}
+
+.ds-tag--primary .ds-tag__remove {
+  color: inherit;
+}
+
+.ds-tag--sm .ds-tag__remove {
+  margin-inline-end: 0;
+}

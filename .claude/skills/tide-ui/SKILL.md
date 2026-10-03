@@ -45,7 +45,7 @@ import { ThemeProvider } from '@aaronherbert/design-system';
 
 Reach for these in this order:
 
-1. **A Tide component** for every control: `Button`, `IconButton`, `TextField`, `Textarea`, `Select`, `Checkbox`, `RadioGroup` + `Radio`, `Switch`, `Slider`, `Fieldset`, `Alert`, `Banner` + `Meter`, `Heading`, `Text`.
+1. **A Tide component** for every control: `Button`, `IconButton`, `TextField`, `Textarea`, `Select`, `Checkbox`, `RadioGroup` + `Radio`, `Switch`, `Slider`, `Fieldset`, `TagInput`, `Tag`, `TreeView` + `TreeItem`, `Dialog`, `ToastProvider` + `useToast`, `Alert`, `Banner` + `Meter`, `Heading`, `Text`.
 2. **A Tide layout primitive** for arrangement: `Stack` (vertical/horizontal flex), `Inline` (wrapping row), `Grid` + `GridItem`, `Container`, `Card`, `Divider`, `AppShell` + `NavItem`.
 3. **`Field`**, to give a custom control the same label/hint/error wiring as the built-in ones.
 4. Only then write custom CSS, and use tokens only (section 4).

@@ -1,0 +1,107 @@
+.ds-tree,
+.ds-tree__group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ds-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--ds-text-sm);
+}
+
+.ds-tree__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+/* The focus ring is drawn on the row so it doesn't wrap the whole subtree. */
+.ds-tree__item {
+  outline: none;
+}
+
+.ds-tree__item:focus-visible > .ds-tree__row {
+  outline: 2px solid var(--ds-color-focus-ring);
+  outline-offset: -2px;
+}
+
+.ds-tree__row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  min-height: var(--ds-space-8);
+  padding-inline: calc(var(--ds-space-1) + var(--ds-tree-level, 0) * var(--ds-space-4)) var(--ds-space-2);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-text-muted);
+  font-weight: var(--ds-weight-medium);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--ds-duration-fast) var(--ds-ease),
+    color var(--ds-duration-fast) var(--ds-ease);
+}
+
+.ds-tree__row:hover {
+  background: var(--ds-color-surface-hover);
+  color: var(--ds-color-text);
+}
+
+.ds-tree__item--selected > .ds-tree__row {
+  background: var(--ds-color-primary-subtle);
+  color: var(--ds-color-primary-text);
+}
+
+.ds-tree__toggle {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--ds-space-6);
+  height: var(--ds-space-6);
+  border-radius: var(--ds-radius-sm);
+  color: var(--ds-color-text-subtle);
+}
+
+.ds-tree__toggle:not(.ds-tree__toggle--leaf):hover {
+  background: var(--ds-color-surface-hover);
+  color: var(--ds-color-text);
+}
+
+.ds-tree__toggle svg {
+  transition: transform var(--ds-duration-fast) var(--ds-ease);
+}
+
+.ds-tree__item[aria-expanded='true'] > .ds-tree__row .ds-tree__toggle svg {
+  transform: rotate(90deg);
+}
+
+.ds-tree__item--selected > .ds-tree__row .ds-tree__toggle {
+  color: inherit;
+}
+
+.ds-tree__icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.ds-tree__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-tree__meta {
+  flex: none;
+  font-size: var(--ds-text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-color-text-muted);
+}
+
+.ds-tree__item--selected > .ds-tree__row .ds-tree__meta {
+  color: inherit;
+}

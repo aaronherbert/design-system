@@ -18,7 +18,8 @@ npm run build-storybook  # static Storybook → storybook-static/
 
 - **Theme.** The Harbour palette: cobalt brand colour, saffron accent and mist neutrals, with cobalt-to-cerulean gradients. Dark is the default; light is a toggle away. Comfortable density and soft corners. All defined as CSS custom properties in [`src/styles/tokens.css`](src/styles/tokens.css), and every pairing passes WCAG 2.2 AA in both themes.
 - **Fonts.** Inter (UI and body), Plus Jakarta Sans (headings) and JetBrains Mono (code), self-hosted through Fontsource.
-- **Form controls.** `Button`, `IconButton`, `TextField`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`/`Radio`, `Switch`, `Slider`, `Fieldset`, `Field`, `Alert`, `Banner`, `Meter`.
+- **Form controls.** `Button`, `IconButton`, `TextField`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`/`Radio`, `Switch`, `Slider`, `Fieldset`, `Field`, `TagInput`, `Tag`, `TreeView`/`TreeItem`.
+- **Feedback and overlays.** `Alert`, `Banner`, `Meter`, `Dialog`, `ToastProvider`/`useToast`.
 - **Layout.** `Stack`, `Inline`, `Grid`/`GridItem`, `Container`, `Card`, `Divider`, `AppShell`/`NavItem`.
 - **Typography.** `Heading`, `Text`.
 - **Theming.** `ThemeProvider` (`dark` by default, or `light` | `system`).

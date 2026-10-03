@@ -27,6 +27,10 @@ Labelled fields (`TextField`, `Textarea`, `Select`, `Slider`) share **FieldBaseP
 | `Switch` | **`label` (required)**, `description?`, `labelPosition?: 'start' \| 'end'` (`start` suits settings lists), checkbox `<input>` props. Renders `role="switch"`. Ref. |
 | `Slider` | FieldBaseProps + `showValue?: boolean \| (value: number) => ReactNode` (format the readout), `min` / `max` / `step` / `value` / `defaultValue`. Ref. |
 | `Fieldset` | **`legend` (required)**, `hint?`, `error?`, `required?`. Groups checkboxes or related fields. |
+| `TagInput` | FieldBaseProps + **`value: string[]` and `onValueChange` (required)**, `suggestions?: string[]` (autocomplete options), `normalize?(text)` (default trims; pass `s => s.trim().toLowerCase()` for case-insensitive tags), `allowCreate?` (default `true`; offers "Create …"), `maxSuggestions?` (default 8), `createLabel?(text)`, `placeholder?`. ARIA combobox: Enter or comma adds a tag, Backspace in an empty input removes the last one, and Escape closes the list (not a surrounding Dialog). Ref goes to the input. |
+| `Tag` | Chip: **`children` (required)**, `tone?: 'neutral' \| 'primary'`, `size?: 'sm' \| 'md'` (default `md`), `onClick?` (makes the label a button), `onRemove?` (adds a × button), `removeLabel?` (default "Remove <children>"). Ref. |
+| `TreeView` | ARIA tree: **`aria-label` (or `aria-labelledby`)**, `selectedId?` / `defaultSelectedId?` / `onSelect?(id)`, `expandedIds?` / `defaultExpandedIds?` / `onExpandedChange?(ids)`. One tab stop. Arrows and Home/End move, Right/Left expand and collapse, Enter/Space select. Ref. |
+| `TreeItem` | **`id` and `label` (required)**, `meta?` (end of the row, e.g. a count), `icon?`, `hasChildren?` (shows the chevron before lazy children exist), nested `TreeItem` children (rendered only while expanded). Must be inside a `TreeView`. |
 | `Field` | For custom controls: FieldBaseProps + `id?`, `required?`, `disabled?`, and a render-prop child `(control) => <YourInput {...control} />`. Spread `control` (`id`, `aria-describedby`, `aria-invalid`) onto the control. |
 
 ## Feedback
@@ -35,6 +39,9 @@ Labelled fields (`TextField`, `Textarea`, `Select`, `Slider`) share **FieldBaseP
 |---|---|
 | `Alert` | `tone?: 'info' \| 'success' \| 'warning' \| 'danger'` (default `info`), `title?`, `action?` (for example a Button), children for the body. `danger` and `warning` use `role="alert"`; the others use `role="status"`. |
 | `Banner` | **`title` (required)**, `action?` (Buttons inside are restyled to sit on the gradient), `variant?: 'brand' \| 'subtle'` (default `brand`, a deep gradient with white text), children for the body. For plan or quota summaries, onboarding and announcements. |
+| `Dialog` | Modal on native `<dialog>`: **`open`, `onClose` and `title` (required)**, `description?`, `footer?` (action bar, secondary first and primary last), `size?: 'sm' \| 'md' \| 'lg'` (400/560/800px, default `md`, full screen below 640px), `closeOnBackdrop?` (default `true`), `closeLabel?`. Children render only while it's open. Escape, the × button and the backdrop all call `onClose`, and focus returns to the opener. Ref. |
+| `ToastProvider` | Wrap the app once, inside `ThemeProvider`. `label?` (region name, default "Notifications"). |
+| `useToast()` | Returns `{ show(options) → id, dismiss(id) }`. Options: **`message`**, `action?: { label, onClick }` (e.g. Undo; clicking it also dismisses), `duration?` (ms, default 5000, `Infinity` to keep it), `tone?: 'neutral' \| 'success' \| 'danger'`. The timer pauses on hover and focus. |
 | `Meter` | **`value` and `label` (required)**, `max?` (default 100), `valueText?` (shows a label/value row and becomes `aria-valuetext`). A known range only, never indeterminate loading. |
 
 ## Typography

@@ -19,7 +19,7 @@ export default defineConfig({
     react(),
     dts({
       include: ['src'],
-      exclude: ['src/**/*.stories.tsx', 'src/stories'],
+      exclude: ['src/**/*.stories.tsx', 'src/**/*.test.tsx', 'src/stories', 'src/test'],
       tsconfigPath: './tsconfig.json',
     }),
     copyFontsCss(),

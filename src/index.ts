@@ -13,6 +13,11 @@ export * from './components/Slider';
 export * from './components/Fieldset';
 export * from './components/Alert';
 export * from './components/Banner';
+export * from './components/Tag';
+export * from './components/TagInput';
+export * from './components/TreeView';
+export * from './components/Dialog';
+export * from './components/Toast';
 export * from './components/Typography';
 
 export * from './layout/Stack';
