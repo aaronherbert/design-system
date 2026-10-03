@@ -45,3 +45,8 @@ Until the package is published to a registry, you can install it straight from G
 [`.github/workflows/storybook.yml`](.github/workflows/storybook.yml) type-checks the project, builds it, and deploys Storybook on every push to `main`. Pull requests are built but not deployed.
 
 One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+## Claude Code
+
+- [`CLAUDE.md`](CLAUDE.md) and [`.claude/skills/tide-component`](.claude/skills/tide-component/SKILL.md) guide Claude when working on this repo.
+- [`.claude/skills/tide-ui`](.claude/skills/tide-ui/SKILL.md) teaches Claude to build UI with Tide in *any* project. Install or update it user-wide with `npm run claude:install-skill`, which copies it to `~/.claude/skills/tide-ui`.
