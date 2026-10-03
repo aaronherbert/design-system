@@ -1,7 +1,7 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 
 // Plugins that only matter for the library build (vite.config.ts), not for Storybook.
-const libraryOnlyPlugins = ['vite:dts', 'copy-fonts-css'];
+const libraryOnlyPlugins = ['unplugin-dts', 'copy-fonts-css'];
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
