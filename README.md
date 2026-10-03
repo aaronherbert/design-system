@@ -25,6 +25,25 @@ npm run build-storybook  # static Storybook → storybook-static/
 
 ## Using it in an app
 
+Tide is published to [GitHub Packages](https://github.com/aaronherbert/design-system/pkgs/npm/design-system).
+
+**One-time setup per machine.** GitHub's registry needs a token even for public packages:
+1. Create a classic personal access token with the `read:packages` scope at https://github.com/settings/tokens.
+2. Add it to your *user-level* `~/.npmrc`. Never commit it.
+   ```
+   //npm.pkg.github.com/:_authToken=YOUR_TOKEN
+   ```
+
+**In each app**, add an `.npmrc` (safe to commit) and install:
+
+```
+@aaronherbert:registry=https://npm.pkg.github.com
+```
+
+```bash
+npm install @aaronherbert/design-system
+```
+
 ```tsx
 import '@aaronherbert/design-system/fonts.css';
 import '@aaronherbert/design-system/styles.css';
@@ -38,7 +57,16 @@ import { ThemeProvider, TextField, Button, Stack } from '@aaronherbert/design-sy
 </ThemeProvider>;
 ```
 
-Until the package is published to a registry, you can install it straight from GitHub (`npm i github:aaronherbert/design-system`) or with `npm link`.
+**In an app's GitHub Actions**, give `actions/setup-node` the values `registry-url: https://npm.pkg.github.com` and `scope: '@aaronherbert'`, and set `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}` with `permissions: packages: read`. Then grant that repo access on the package page: **Package settings → Manage Actions access → Add repository**.
+
+## Releasing
+
+```bash
+npm version minor        # or patch / major: bumps package.json, commits and tags vX.Y.Z
+git push --follow-tags   # the tag triggers .github/workflows/publish.yml
+```
+
+The publish workflow checks that the tag matches `package.json`, type-checks, builds and publishes to GitHub Packages. Use semantic versioning: patch for fixes, minor for new components or props, major for anything that breaks an app (a renamed prop, a removed token).
 
 ## Deploying Storybook to GitHub Pages
 

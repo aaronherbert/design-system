@@ -13,13 +13,19 @@ Tide is Aaron's design system. Use its components, tokens and theme for every pi
 
 ## 1. Check the project is set up
 
-Look in `package.json` for `@aaronherbert/design-system`. If it's missing, install it from GitHub (the package isn't on npm; its `prepare` script builds it on install):
+Look in `package.json` for `@aaronherbert/design-system`. If it's missing, install it. Tide is published to **GitHub Packages**, not npmjs.com:
 
-```bash
-npm install github:aaronherbert/design-system
-```
+1. Make sure the project has an `.npmrc` (commit this file) containing:
+   ```
+   @aaronherbert:registry=https://npm.pkg.github.com
+   ```
+2. Run `npm install @aaronherbert/design-system`.
 
-npm 11 may warn that the package "has install scripts not yet covered by allowScripts". The install still includes the built files. To be sure, confirm that `node_modules/@aaronherbert/design-system/dist/index.js` exists. To pick up a newer Tide later, run the same install command again.
+Installing needs a GitHub token, even though the package is public. If `npm install` fails with **401** or **403**, the machine has no token. **Don't create, request or paste one yourself.** Tell the user to add a classic personal access token with the `read:packages` scope to their *user-level* `~/.npmrc` (never the project's), as `//npm.pkg.github.com/:_authToken=<token>`. They create the token at https://github.com/settings/tokens.
+
+In the project's own GitHub Actions, give `actions/setup-node` the values `registry-url: https://npm.pkg.github.com` and `scope: '@aaronherbert'`, and set `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}` with `permissions: packages: read`. The user also has to grant that repo access once: on the package page, go to Package settings → Manage Actions access → Add repository.
+
+To update Tide later, run `npm install @aaronherbert/design-system@latest`. Release notes are in the repo's tags.
 
 It needs React 18 or later. Then import the two stylesheets once, at the app entry (`main.tsx`, `_app.tsx` or the root layout), and wrap the app in `ThemeProvider`:
 

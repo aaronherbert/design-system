@@ -3,7 +3,7 @@
 Tide is the React design system (`@aaronherbert/design-system`) behind all of Aaron's React apps. A change here reaches every app that uses it, so keep the API stable and keep every visual change accessible.
 
 - Storybook: https://aaronherbert.github.io/design-system/ (deployed by `.github/workflows/storybook.yml` on push to `main`)
-- Apps install it from GitHub: `npm install github:aaronherbert/design-system`. The `prepare` script builds `dist/` on install, because `dist/` isn't committed.
+- Published to GitHub Packages (`https://npm.pkg.github.com`) by `.github/workflows/publish.yml` when a `v*` tag is pushed. Apps install it with an `.npmrc` scope line plus a user-level token (see README). `prepare` builds `dist/`, which isn't committed.
 
 ## Commands
 
@@ -16,6 +16,10 @@ npm run claude:install-skill   # copy the tide-ui skill to ~/.claude/skills (do 
 ```
 
 Before you call a change done: `typecheck`, `build` and `build-storybook` all pass, and you've looked at the affected stories in the browser in **dark and light**.
+
+## Releasing
+
+`npm version patch|minor|major` (commits and tags), then `git push --follow-tags`. Patch is for fixes, minor for new components, props or tokens, and major for anything that breaks an app (renamed or removed props or tokens, changed defaults). Only release when the user asks. Publishing is public and versions can't be reused.
 
 ## Layout
 
