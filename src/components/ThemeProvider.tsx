@@ -25,7 +25,7 @@ function useSystemTheme(): 'light' | 'dark' {
  * Wrap your app (or any subtree) in one of these.
  */
 export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(function ThemeProvider(
-  { theme = 'light', className, ...rest },
+  { theme = 'dark', className, ...rest },
   ref,
 ) {
   const system = useSystemTheme();

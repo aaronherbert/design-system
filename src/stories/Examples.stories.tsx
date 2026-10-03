@@ -3,6 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   Alert,
   AppShell,
+  Banner,
+  Meter,
   Button,
   Card,
   Checkbox,
@@ -135,6 +137,13 @@ export const SettingsPage: StoryObj = {
             <Heading level={1} size="xl">Settings</Heading>
             <Text tone="muted">Manage your profile, notifications and workspace preferences.</Text>
           </Stack>
+
+          <Banner title="Pro plan" action={<Button size="sm">View usage</Button>}>
+            <Stack gap={3}>
+              <span>1,240 of 2,000 build minutes used this month. Resets on 1 November.</span>
+              <Meter label="Build minutes used" value={1240} max={2000} />
+            </Stack>
+          </Banner>
 
           <Card
             title="Profile"

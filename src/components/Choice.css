@@ -58,7 +58,7 @@
   display: grid;
   place-content: center;
   background: var(--ds-color-control-bg);
-  border: 1.5px solid var(--ds-color-control-border-hover);
+  border: 1.5px solid var(--ds-color-control-border-strong);
   cursor: pointer;
   transition:
     background-color var(--ds-duration-fast) var(--ds-ease),
@@ -158,7 +158,7 @@
   height: var(--ds-switch-h);
   border: 0;
   border-radius: var(--ds-radius-full);
-  background: var(--ds-color-control-border-hover);
+  background: var(--ds-color-control-border-strong);
   place-content: center start;
   padding: 2px;
 }

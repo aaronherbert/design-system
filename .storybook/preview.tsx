@@ -11,14 +11,14 @@ const preview: Preview = {
         title: 'Theme',
         icon: 'mirror',
         items: [
-          { value: 'light', title: 'Light', icon: 'sun' },
           { value: 'dark', title: 'Dark', icon: 'moon' },
+          { value: 'light', title: 'Light', icon: 'sun' },
         ],
         dynamicTitle: true,
       },
     },
   },
-  initialGlobals: { theme: 'light' },
+  initialGlobals: { theme: 'dark' },
   parameters: {
     layout: 'fullscreen',
     controls: { matchers: { color: /(background|color)$/i } },
@@ -29,7 +29,7 @@ const preview: Preview = {
   decorators: [
     (Story, ctx) => (
       // Stories set `fullBleed: true` to render edge to edge (page-level examples).
-      <ThemeProvider theme={ctx.globals.theme ?? 'light'} style={{ padding: ctx.parameters.fullBleed ? 0 : '1.5rem', minHeight: ctx.viewMode === 'story' ? '100vh' : undefined }}>
+      <ThemeProvider theme={ctx.globals.theme ?? 'dark'} style={{ padding: ctx.parameters.fullBleed ? 0 : '1.5rem', minHeight: ctx.viewMode === 'story' ? '100vh' : undefined }}>
         <Story />
       </ThemeProvider>
     ),

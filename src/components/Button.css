@@ -7,7 +7,7 @@
   height: var(--ds-control-h-md);
   padding-inline: var(--ds-space-4);
   border: 1px solid transparent;
-  border-radius: var(--ds-radius-md);
+  border-radius: var(--ds-radius-button);
   font-family: var(--ds-font-sans);
   font-size: var(--ds-text-sm);
   font-weight: var(--ds-weight-semibold);
@@ -61,16 +61,25 @@
 }
 
 /* Variants */
+/* Gradient sits on top of the solid colour, which stays as the fallback.
+   Hover/active overlays darken (light) or lighten (dark) away from the label colour. */
 .ds-button--primary {
-  background: var(--ds-color-primary);
+  --ds-button-overlay: rgb(0 0 0 / 0.12);
+  background-color: var(--ds-color-primary);
+  background-image: var(--ds-gradient-primary, none);
   color: var(--ds-color-on-primary);
   box-shadow: var(--ds-shadow-sm);
 }
+[data-theme='dark'] .ds-button--primary {
+  --ds-button-overlay: rgb(255 255 255 / 0.14);
+}
 .ds-button--primary:hover:not(:disabled) {
-  background: var(--ds-color-primary-hover);
+  background-color: var(--ds-color-primary-hover);
+  box-shadow: var(--ds-shadow-sm), inset 0 0 0 100px var(--ds-button-overlay);
 }
 .ds-button--primary:active:not(:disabled) {
-  background: var(--ds-color-primary-active);
+  background-color: var(--ds-color-primary-active);
+  box-shadow: inset 0 0 0 100px var(--ds-button-overlay), inset 0 0 0 100px var(--ds-button-overlay);
 }
 
 .ds-button--secondary {
@@ -101,10 +110,7 @@
 
 .ds-button--danger {
   background: var(--ds-color-danger);
-  color: #fff;
-}
-[data-theme='dark'] .ds-button--danger {
-  color: var(--ds-slate-950);
+  color: var(--ds-color-on-danger);
 }
 .ds-button--danger:hover:not(:disabled) {
   background: var(--ds-color-danger-hover);

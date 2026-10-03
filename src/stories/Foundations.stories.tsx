@@ -7,16 +7,22 @@ const meta: Meta = {
 };
 export default meta;
 
-const scales = {
-  Teal: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'],
-  Coral: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'],
-  Slate: ['0', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'],
+const steps = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
+const scales: Record<string, { token: string; role: string }> = {
+  Cobalt: { token: 'cobalt', role: 'primary' },
+  'Cobalt alt': { token: 'cobalt-alt', role: 'gradient partner (cerulean)' },
+  Saffron: { token: 'saffron', role: 'accent' },
+  Mist: { token: 'mist', role: 'neutrals' },
+  Red: { token: 'red', role: 'danger' },
+  Green: { token: 'green', role: 'success' },
+  Amber: { token: 'amber', role: 'warning' },
+  Blue: { token: 'blue', role: 'info' },
 };
 
 const semantic = [
-  ['bg', 'surface', 'surface-sunken', 'border', 'border-strong'],
+  ['bg', 'surface', 'surface-sunken', 'border', 'border-strong', 'control-border', 'control-border-strong'],
   ['text', 'text-muted', 'text-subtle', 'text-disabled'],
-  ['primary', 'primary-hover', 'primary-subtle', 'on-primary', 'accent', 'accent-subtle'],
+  ['primary', 'primary-hover', 'primary-subtle', 'primary-text', 'on-primary', 'accent', 'accent-subtle', 'accent-text'],
   ['success', 'success-subtle', 'warning', 'warning-subtle', 'danger', 'danger-subtle', 'info', 'info-subtle'],
 ];
 
@@ -47,18 +53,18 @@ export const Colours: StoryObj = {
       <Stack gap={2}>
         <Heading level={1}>Colour</Heading>
         <Text tone="muted">
-          Teal is the brand colour, coral is the accent and slate is for neutrals. Apps should use the semantic tokens,
-          which change with the theme.
+          Harbour: cobalt is the brand colour, saffron is the accent and mist is for neutrals. Gradients run from cobalt
+          to cerulean. Apps should use the semantic tokens, which change with the theme. Every pairing passes WCAG 2.2 AA.
         </Text>
       </Stack>
-      {Object.entries(scales).map(([name, steps]) => (
+      {Object.entries(scales).map(([name, { token, role }]) => (
         <Stack key={name} gap={3}>
           <Heading level={2} size="sm">
-            {name}
+            {name} <Text as="span" size="sm" tone="muted">· {role}</Text>
           </Heading>
           <Grid minItemWidth="5.5rem" gap={3}>
             {steps.map((s) => (
-              <Swatch key={s} cssVar={`--ds-${name.toLowerCase()}-${s}`} label={s} />
+              <Swatch key={s} cssVar={`--ds-${token}-${s}`} label={s} />
             ))}
           </Grid>
         </Stack>
@@ -75,6 +81,46 @@ export const Colours: StoryObj = {
           </Grid>
         ))}
       </Stack>
+    </Stack>
+  ),
+};
+
+const gradients = [
+  ['--ds-gradient-primary', 'Primary buttons, logo, progress fills. White (light) or dark (dark) text passes at both ends.'],
+  ['--ds-gradient-banner', 'Brand banners. Deep cobalt to cerulean with a saffron glow; white text passes at every stop.'],
+  ['--ds-gradient-line', 'The 2px rule under the app header.'],
+  ['--ds-gradient-meter', 'Meter fill inside a brand banner.'],
+  ['--ds-gradient-page', 'A faint glow behind the app background.'],
+];
+
+export const Gradients: StoryObj = {
+  render: () => (
+    <Stack gap={8}>
+      <Stack gap={2}>
+        <Heading level={1}>Gradients</Heading>
+        <Text tone="muted" style={{ maxWidth: '65ch' }}>
+          Gradients sit on top of a solid semantic colour, which stays as the fallback in browsers that can't draw
+          them. They interpolate in OKLCH so the middle never turns grey. Use them for emphasis, never as the only way
+          to show state.
+        </Text>
+      </Stack>
+      <Grid minItemWidth="18rem" gap={5}>
+        {gradients.map(([token, use]) => (
+          <Stack key={token} gap={2}>
+            <div
+              style={{
+                height: token === '--ds-gradient-line' ? 8 : 96,
+                borderRadius: 'var(--ds-radius-lg)',
+                backgroundColor: 'var(--ds-color-surface)',
+                backgroundImage: `var(${token})`,
+                boxShadow: 'inset 0 0 0 1px var(--ds-color-border)',
+              }}
+            />
+            <Text size="sm" mono>{token}</Text>
+            <Text size="sm" tone="muted">{use}</Text>
+          </Stack>
+        ))}
+      </Grid>
     </Stack>
   ),
 };

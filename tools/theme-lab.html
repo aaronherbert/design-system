@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tide Theme Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a sticky control rail on the left, the live mockups and their audit on the right.
+   Page chrome stays quiet and neutral so the mockups carry all the colour. */
+:root {
+  --page-bg: #f2f4f5;
+  --page-surface: #ffffff;
+  --page-sunken: #e9edef;
+  --page-ink: #192024;
+  --page-muted: #56636b;
+  --page-line: #d9e0e4;
+  --page-accent: #0e6a62;
+  --page-accent-soft: #e2f4f1;
+  --pass-bg: #e3f5ea; --pass-ink: #155a33;
+  --fail-bg: #fde8e7; --fail-ink: #9b1c1c;
+  --info-bg: #e8eef8; --info-ink: #24477e;
+
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page-bg: #0d1214; --page-surface: #151c1f; --page-sunken: #10171a;
+    --page-ink: #eaf0f2; --page-muted: #9fadb5; --page-line: #283237;
+    --page-accent: #4fcfbf; --page-accent-soft: #15302d;
+    --pass-bg: #143222; --pass-ink: #8fe0ad;
+    --fail-bg: #3a1c1c; --fail-ink: #ffaaa5;
+    --info-bg: #1a2638; --info-ink: #a9c4f0;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #0d1214; --page-surface: #151c1f; --page-sunken: #10171a;
+  --page-ink: #eaf0f2; --page-muted: #9fadb5; --page-line: #283237;
+  --page-accent: #4fcfbf; --page-accent-soft: #15302d;
+  --pass-bg: #143222; --pass-ink: #8fe0ad;
+  --fail-bg: #3a1c1c; --fail-ink: #ffaaa5;
+  --info-bg: #1a2638; --info-ink: #a9c4f0;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--page-bg);
+  color: var(--page-ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.wrap { max-width: 1560px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.75rem, 1.2rem + 2vw, 2.4rem); letter-spacing: -0.025em; line-height: 1.1; }
+h2 { font-size: 1.15rem; letter-spacing: -0.01em; }
+p { margin: 0; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--page-accent); }
+.lead { color: var(--page-muted); max-width: 68ch; margin-top: 8px; }
+.head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 24px; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+@media (min-width: 1100px) {
+  .layout { grid-template-columns: 300px minmax(0, 1fr); align-items: start; }
+  .controls { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; }
+}
+
+.panel { background: var(--page-surface); border: 1px solid var(--page-line); border-radius: 14px; }
+.controls { display: flex; flex-direction: column; gap: 0; padding: 6px 0; }
+.controls section { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+.controls section + section { border-top: 1px solid var(--page-line); }
+.controls h2 { font-size: 13px; font-family: var(--font-body); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--page-muted); }
+.note { font-size: 12.5px; color: var(--page-muted); }
+
+/* Scheme picker */
+.schemes { display: flex; flex-direction: column; gap: 8px; }
+.scheme { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; padding: 10px 12px; border: 1px solid var(--page-line); border-radius: 10px; cursor: pointer; background: var(--page-surface); }
+.scheme:hover { border-color: var(--page-muted); }
+.scheme input { position: absolute; opacity: 0; pointer-events: none; }
+.scheme:has(input:checked) { border-color: var(--page-accent); box-shadow: 0 0 0 1px var(--page-accent); background: var(--page-accent-soft); }
+.scheme:has(input:focus-visible) { outline: 2px solid var(--page-accent); outline-offset: 2px; }
+.dots { grid-row: span 2; display: flex; align-self: center; }
+.dots i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--page-surface); margin-left: -7px; }
+.dots i:first-child { margin-left: 0; }
+.scheme-name { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.scheme-desc { font-size: 12.5px; color: var(--page-muted); line-height: 1.4; }
+.scheme-score { grid-column: 2; font-size: 11.5px; font-family: var(--font-mono); color: var(--page-muted); }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 1px 6px; border-radius: 99px; background: var(--page-accent); color: var(--page-surface); }
+.tag--muted { background: var(--page-sunken); color: var(--page-muted); }
+
+/* Segmented controls */
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--page-sunken); border-radius: 9px; padding: 3px; gap: 3px; }
+.seg label { position: relative; text-align: center; font-size: 13px; font-weight: 500; padding: 6px 4px; border-radius: 7px; cursor: pointer; color: var(--page-muted); }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label:has(input:checked) { background: var(--page-surface); color: var(--page-ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+.seg label:has(input:focus-visible) { outline: 2px solid var(--page-accent); outline-offset: 1px; }
+select.page-select { width: 100%; height: 36px; border-radius: 8px; border: 1px solid var(--page-line); background: var(--page-surface); color: var(--page-ink); font: inherit; font-size: 13.5px; padding: 0 8px; }
+select.page-select:focus-visible { outline: 2px solid var(--page-accent); outline-offset: 1px; }
+
+.content { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.block { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+.block-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.block-head p { color: var(--page-muted); font-size: 14px; max-width: 70ch; }
+
+/* Mockup panes */
+.panes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 1280px) { .panes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pane { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.panes[data-default="dark"] .pane--dark { order: -1; }
+.pane figcaption { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--page-muted); display: flex; justify-content: space-between; }
+.panes[data-vision="protanopia"] .m { filter: url(#f-protanopia); }
+.panes[data-vision="deuteranopia"] .m { filter: url(#f-deuteranopia); }
+.panes[data-vision="tritanopia"] .m { filter: url(#f-tritanopia); }
+.panes[data-vision="achromatopsia"] .m { filter: url(#f-achromatopsia); }
+.panes[data-vision="blur"] .m { filter: blur(1.4px); }
+
+/* ---------- Mockup (uses only --c-* and density/radius vars) ---------- */
+.m {
+  container-type: inline-size;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.45;
+  color: var(--c-text); background: var(--c-bg);
+  border: 1px solid var(--page-line); border-radius: 14px; overflow: hidden;
+}
+.m[data-mode="light"] { color-scheme: light; }
+.m[data-mode="dark"] { color-scheme: dark; }
+.m-top { position: relative; display: flex; align-items: center; gap: 10px; padding: 0 16px; height: 52px; background: var(--c-surface); border-bottom: 1px solid var(--c-border); }
+.m-top::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background-image: var(--g-line); pointer-events: none; }
+.m-brand { display: flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; }
+.m-logo { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; background-color: var(--c-primary); background-image: var(--g-btn); }
+.m-banner { display: flex; flex-direction: column; gap: 14px; padding: var(--card); border-radius: var(--r-lg); border: 1px solid var(--c-bannerBorder); background-color: var(--c-primarySubtle); background-image: var(--g-banner); color: var(--c-bannerText); }
+.m-banner-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.m-banner-title { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--c-bannerTitle); }
+.m-banner p { font-size: 13px; margin-top: 2px; }
+.m-banner .m-btn { background: transparent; border-color: currentColor; color: var(--c-bannerTitle); }
+.m-banner .m-btn:hover { background: color-mix(in srgb, var(--c-bannerTitle) 12%, transparent); }
+.m-meter { height: 8px; border-radius: 99px; background: var(--c-meterTrack); overflow: hidden; }
+.m-meter span { display: block; height: 100%; width: 62%; border-radius: inherit; background-color: var(--c-primary); background-image: var(--g-meter); }
+.m-tabs { display: flex; gap: 2px; margin-left: 8px; overflow: hidden; }
+.m-tabs a { padding: 6px 10px; border-radius: var(--r-md); color: var(--c-muted); text-decoration: none; font-weight: 500; font-size: 13px; white-space: nowrap; }
+.m-tabs a:hover { background: var(--c-hover); color: var(--c-text); }
+.m-tabs a[aria-current] { background: var(--c-primarySubtle); color: var(--c-primaryText); }
+.m-avatar { margin-left: auto; flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 11.5px; font-weight: 700; background: var(--c-accentSubtle); color: var(--c-accentText); }
+.m-body { padding: var(--stack); display: flex; flex-direction: column; gap: var(--stack); background-image: var(--g-page); background-repeat: no-repeat; }
+.m-card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg); }
+.m-card > header { padding: var(--card) var(--card) 0; }
+.m-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 17px; letter-spacing: -0.01em; color: var(--c-text); }
+.m-card > header p { margin-top: 4px; color: var(--c-muted); font-size: 13px; }
+.m-form { padding: var(--card); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack) var(--gapx); }
+.m-span { grid-column: 1 / -1; }
+@container (max-width: 520px) { .m-form { grid-template-columns: minmax(0, 1fr); } .m-tabs a:nth-child(n+3) { display: none; } }
+.m-field { display: flex; flex-direction: column; gap: var(--field-gap); min-width: 0; }
+.m-label { font-size: 13px; font-weight: 500; color: var(--c-text); }
+.m-req { color: var(--c-danger); margin-left: 2px; }
+.m-ctl { display: flex; align-items: center; gap: 6px; height: var(--h); padding: 0 var(--padx); background: var(--c-controlBg); border: 1px solid var(--c-controlBorder); border-radius: var(--r-md); color: var(--c-text); transition: border-color .12s, box-shadow .12s; }
+.m-ctl:hover { border-color: var(--c-controlBorderHover); }
+.m-ctl:focus-within { border-color: var(--c-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-focus) 32%, transparent); }
+.m-ctl--err, .m-ctl--err:hover { border-color: var(--c-danger); }
+.m-ctl input, .m-ctl select { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; padding: 0; background: transparent; color: inherit; font: inherit; font-size: var(--fs-input); }
+.m-ctl input::placeholder { color: var(--c-subtle); opacity: 1; }
+.m-adorn { color: var(--c-subtle); font-size: var(--fs-input); white-space: nowrap; }
+.m-select { position: relative; padding-right: 0; }
+.m-select select { appearance: none; padding-right: 34px; cursor: pointer; }
+.m-select select option { background: var(--c-surface); color: var(--c-text); }
+.m-select svg { position: absolute; right: 11px; pointer-events: none; color: var(--c-muted); }
+.m-hint { font-size: 12.5px; color: var(--c-muted); }
+.m-err { font-size: 12.5px; color: var(--c-dangerText); display: flex; gap: 5px; align-items: flex-start; }
+.m-err svg { flex: none; margin-top: 2px; }
+.m fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.m legend { padding: 0; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--c-text); }
+.m-row { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+.m-col { display: flex; flex-direction: column; gap: 12px; }
+.m-choice { display: flex; gap: 10px; align-items: flex-start; }
+.m-choice--between { justify-content: space-between; }
+.m-choice label { font-weight: 500; font-size: 13.5px; cursor: pointer; color: var(--c-text); }
+.m-choice small { display: block; color: var(--c-muted); font-size: 12.5px; font-weight: 400; margin-top: 1px; }
+.m-cb, .m-rd, .m-sw { appearance: none; margin: 1px 0 0; flex: none; display: grid; place-content: center; border: 1.5px solid var(--c-switchOff); background: var(--c-controlBg); cursor: pointer; }
+.m-cb { width: 18px; height: 18px; border-radius: var(--r-sm); }
+.m-cb::before { content: ''; width: 12px; height: 12px; background: var(--c-onPrimary); transform: scale(0); transition: transform .12s;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2 5 8.6l4.6-5' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2 5 8.6l4.6-5' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+.m-cb:checked, .m-rd:checked { background: var(--c-primary); border-color: var(--c-primary); }
+.m-cb:checked::before, .m-rd:checked::before { transform: scale(1); }
+.m-rd { width: 18px; height: 18px; border-radius: 50%; }
+.m-rd::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--c-onPrimary); transform: scale(0); transition: transform .12s; }
+.m-sw { width: 36px; height: 20px; border-radius: 99px; border: 0; background: var(--c-switchOff); padding: 2px; place-content: center start; }
+.m-sw::before { content: ''; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .25); transition: transform .18s; }
+.m-sw:checked { background: var(--c-primary); }
+.m-sw:checked::before { transform: translateX(16px); }
+.m-range-head { display: flex; justify-content: space-between; align-items: baseline; }
+.m-range-head output { font-variant-numeric: tabular-nums; color: var(--c-muted); font-size: 13px; }
+.m-range { width: 100%; margin: 6px 0 0; accent-color: var(--c-primary); }
+.m-card > footer { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; padding: 12px var(--card); border-top: 1px solid var(--c-border); background: var(--c-sunken); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.m-btn { height: var(--h); padding: 0 calc(var(--padx) + 4px); border-radius: var(--btn-r); border: 1px solid transparent; font: 600 13.5px 'Inter', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: background-color .12s; }
+.m-btn--primary { background-color: var(--c-primary); background-image: var(--g-btn); color: var(--c-onPrimary); }
+.m-btn--primary:hover:not(:disabled) { background-color: var(--c-primaryHover); box-shadow: inset 0 0 0 100px var(--g-hover); }
+.m-btn--secondary { background: var(--c-primarySubtle); color: var(--c-primaryText); }
+.m-btn--outline { background: var(--c-surface); border-color: var(--c-controlBorder); color: var(--c-text); }
+.m-btn--outline:hover { background: var(--c-hover); }
+.m-btn--ghost { background: transparent; color: var(--c-text); }
+.m-btn--ghost:hover { background: var(--c-hover); }
+.m-btn--danger { background: var(--c-danger); color: var(--c-onDanger); }
+.m-btn--danger:hover { background: var(--c-dangerHover); }
+.m-btn:disabled { opacity: .5; cursor: not-allowed; }
+.m-cb:focus-visible, .m-rd:focus-visible, .m-sw:focus-visible, .m-btn:focus-visible, .m-tabs a:focus-visible, .m-range:focus-visible { outline: 2px solid var(--c-focus); outline-offset: 2px; }
+.m-strip { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.m-alerts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@container (max-width: 520px) { .m-alerts { grid-template-columns: minmax(0, 1fr); } }
+.m-alert { display: flex; gap: 10px; padding: 10px 12px; border-radius: var(--r-md); border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent); border-left: 3px solid var(--tone); background: var(--tone-bg); font-size: 13px; color: var(--c-text); }
+.m-alert svg { flex: none; color: var(--tone-text); margin-top: 1px; }
+.m-alert b { display: block; color: var(--tone-text); font-weight: 600; }
+.m-alert--success { --tone: var(--c-success); --tone-bg: var(--c-successSubtle); --tone-text: var(--c-successText); }
+.m-alert--warning { --tone: var(--c-warning); --tone-bg: var(--c-warningSubtle); --tone-text: var(--c-warningText); }
+.m-alert--danger { --tone: var(--c-danger); --tone-bg: var(--c-dangerSubtle); --tone-text: var(--c-dangerText); }
+.m-alert--info { --tone: var(--c-info); --tone-bg: var(--c-infoSubtle); --tone-text: var(--c-infoText); }
+
+/* Audit */
+.summary { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+.pill--pass { background: var(--pass-bg); color: var(--pass-ink); }
+.pill--fail { background: var(--fail-bg); color: var(--fail-ink); }
+.pill--info { background: var(--info-bg); color: var(--info-ink); }
+.table-scroll { overflow-x: auto; border: 1px solid var(--page-line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13.5px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--page-line); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--page-muted); font-weight: 600; background: var(--page-sunken); }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sample { display: inline-grid; place-items: center; width: 44px; height: 26px; border-radius: 6px; font-weight: 700; font-size: 13px; margin-right: 8px; vertical-align: middle; box-shadow: inset 0 0 0 1px rgb(127 127 127 / .25); }
+.sample--line { font-size: 0; }
+.ratio { display: inline-flex; align-items: center; gap: 8px; }
+.crit { color: var(--page-muted); font-size: 12.5px; }
+.checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.checklist li { border: 1px solid var(--page-line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.checklist li strong { font-size: 14px; }
+.checklist li span.note { font-size: 13px; }
+.checklist .pill { align-self: flex-start; }
+
+/* Palette ramps */
+.ramps { display: flex; flex-direction: column; gap: 12px; }
+.ramp { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: center; }
+.ramp-name { font-weight: 600; font-size: 13.5px; }
+.ramp-name small { display: block; font-weight: 400; color: var(--page-muted); font-size: 12px; }
+.ramp-steps { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); border-radius: 8px; overflow: hidden; }
+.ramp-steps div { height: 52px; padding: 5px 6px; display: flex; flex-direction: column; justify-content: space-between; font-size: 10.5px; font-family: var(--font-mono); line-height: 1.2; min-width: 0; overflow: hidden; }
+@media (max-width: 760px) {
+  .ramp { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .ramp-steps div span:last-child { display: none; }
+}
+
+/* Spacing */
+.space-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 24px; }
+.scale { display: flex; flex-direction: column; gap: 7px; }
+.scale-row { display: grid; grid-template-columns: 116px 1fr 44px; align-items: center; gap: 10px; font-size: 12.5px; }
+.scale-row code { color: var(--page-muted); }
+.scale-row .bar { height: 12px; background: var(--page-accent); border-radius: 3px; }
+.scale-row .px { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--page-muted); }
+dl.specs { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0; font-size: 13.5px; }
+dl.specs dt { color: var(--page-muted); }
+dl.specs dd { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Export */
+.export-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.choice-line { font-family: var(--font-mono); font-size: 13px; background: var(--page-sunken); border-radius: 8px; padding: 8px 12px; overflow-wrap: anywhere; }
+.btn { height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--page-line); background: var(--page-surface); color: var(--page-ink); font: 600 13.5px var(--font-body); cursor: pointer; }
+.btn:hover { background: var(--page-sunken); }
+.btn--primary { background: var(--page-accent); border-color: var(--page-accent); color: var(--page-surface); }
+.btn--primary:hover { background: var(--page-accent); filter: brightness(1.08); }
+.btn:focus-visible { outline: 2px solid var(--page-accent); outline-offset: 2px; }
+textarea.code { width: 100%; height: 320px; resize: vertical; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--page-line); background: var(--page-sunken); color: var(--page-ink); white-space: pre; overflow: auto; }
+textarea.code:focus-visible { outline: 2px solid var(--page-accent); outline-offset: 1px; }
+.status { font-size: 13px; color: var(--page-muted); min-height: 1.5em; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="f-protanopia"><feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0"/></filter>
+    <filter id="f-deuteranopia"><feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0"/></filter>
+    <filter id="f-tritanopia"><feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0"/></filter>
+    <filter id="f-achromatopsia"><feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0 0 0 1 0"/></filter>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Tide design system</p>
+    <h1>Tide Theme Lab</h1>
+    <p class="lead">Try palettes, density and corner styles on real Tide components, in light and dark at the same time. Every colour pairing is checked against WCAG 2.2 as you switch.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="controls panel" aria-label="Theme options">
+      <section>
+        <h2 id="palette-label">Palette</h2>
+        <div class="schemes" id="schemes" role="radiogroup" aria-labelledby="palette-label"></div>
+        <p class="note">Scores count WCAG AA passes across every pairing in the audit, including the gradients you have switched on.</p>
+      </section>
+      <section>
+        <h2 id="density-label">Density</h2>
+        <div class="seg" role="radiogroup" aria-labelledby="density-label">
+          <label><input type="radio" name="density" id="density-compact" value="compact">Compact</label>
+          <label><input type="radio" name="density" id="density-comfortable" value="comfortable">Comfortable</label>
+          <label><input type="radio" name="density" id="density-spacious" value="spacious">Spacious</label>
+        </div>
+        <p class="note" id="density-note"></p>
+      </section>
+      <section>
+        <h2 id="corners-label">Corners</h2>
+        <div class="seg" role="radiogroup" aria-labelledby="corners-label">
+          <label><input type="radio" name="corners" id="corners-sharp" value="sharp">Sharp</label>
+          <label><input type="radio" name="corners" id="corners-soft" value="soft">Soft</label>
+          <label><input type="radio" name="corners" id="corners-round" value="round">Round</label>
+        </div>
+      </section>
+      <section>
+        <h2 id="gradients-label">Gradients</h2>
+        <div class="seg" role="radiogroup" aria-labelledby="gradients-label">
+          <label><input type="radio" name="gradients" id="gradients-none" value="none">None</label>
+          <label><input type="radio" name="gradients" id="gradients-subtle" value="subtle">Subtle</label>
+          <label><input type="radio" name="gradients" id="gradients-vivid" value="vivid">Vivid</label>
+        </div>
+        <p class="note" id="gradients-note"></p>
+      </section>
+      <section>
+        <h2 id="mode-label">Default mode</h2>
+        <div class="seg" role="radiogroup" aria-labelledby="mode-label">
+          <label><input type="radio" name="mode" id="mode-light" value="light">Light</label>
+          <label><input type="radio" name="mode" id="mode-dark" value="dark">Dark</label>
+          <label><input type="radio" name="mode" id="mode-system" value="system">System</label>
+        </div>
+        <p class="note">What apps show before anyone picks a theme. Both modes are always available.</p>
+      </section>
+      <section>
+        <h2><label for="vision">Preview for</label></h2>
+        <select class="page-select" id="vision">
+          <option value="none">Typical colour vision</option>
+          <option value="protanopia">Protanopia (no red cones)</option>
+          <option value="deuteranopia">Deuteranopia (no green cones)</option>
+          <option value="tritanopia">Tritanopia (no blue cones)</option>
+          <option value="achromatopsia">Achromatopsia (no colour)</option>
+          <option value="blur">Blurred or low vision</option>
+        </select>
+        <p class="note">An approximate simulation, applied to the mockups only. Check that errors, selections and states still read clearly.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panes" id="panes" aria-label="Component mockups">
+        <figure class="pane pane--light"><figcaption><span id="lbl-light">Light</span><span id="cap-light"></span></figcaption><div id="pane-light"></div></figure>
+        <figure class="pane pane--dark"><figcaption><span id="lbl-dark">Dark</span><span id="cap-dark"></span></figcaption><div id="pane-dark"></div></figure>
+      </section>
+
+      <section class="panel block" aria-labelledby="audit-title">
+        <div class="block-head">
+          <h2 id="audit-title">Accessibility audit</h2>
+          <div class="summary" id="audit-summary"></div>
+        </div>
+        <p class="note">Text needs 4.5:1 against its background (WCAG 1.4.3). Borders and states that identify a control, and the focus ring, need 3:1 against what surrounds them (1.4.11). Disabled controls are exempt.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th scope="col">Pairing</th><th scope="col">Light</th><th scope="col">Dark</th><th scope="col">Needs</th></tr></thead>
+            <tbody id="audit-body"></tbody>
+          </table>
+        </div>
+        <ul class="checklist" id="checklist"></ul>
+      </section>
+
+      <section class="panel block" aria-labelledby="ramps-title">
+        <div class="block-head">
+          <h2 id="ramps-title">Palette</h2>
+          <p id="ramps-note">The raw colour ramps behind the theme. Components use the semantic tokens, never these directly.</p>
+        </div>
+        <div class="ramps" id="ramps"></div>
+      </section>
+
+      <section class="panel block" aria-labelledby="spacing-title">
+        <div class="block-head">
+          <h2 id="spacing-title">Spacing and sizing</h2>
+          <p>A 4px grid. Density changes control heights and the padding inside cards and forms. The spacing scale itself stays the same.</p>
+        </div>
+        <div class="space-grid">
+          <div class="scale" id="scale"></div>
+          <dl class="specs" id="specs"></dl>
+        </div>
+      </section>
+
+      <section class="panel block" aria-labelledby="export-title">
+        <div class="block-head">
+          <h2 id="export-title">Use this theme</h2>
+          <p>Copy the summary and paste it to Claude to apply it to the repo, or copy the CSS to replace <code>src/styles/tokens.css</code> yourself.</p>
+        </div>
+        <p class="choice-line" id="choice-line"></p>
+        <div class="export-row">
+          <button class="btn btn--primary" type="button" id="copy-summary">Copy summary</button>
+          <button class="btn" type="button" id="copy-css">Copy CSS</button>
+          <span class="status" id="copy-status" role="status"></span>
+        </div>
+        <label class="note" for="css-out">Generated tokens.css</label>
+        <textarea class="code" id="css-out" readonly spellcheck="false"></textarea>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+/* ENGINE START */
+const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+const RAMP_L = [0.972, 0.936, 0.88, 0.80, 0.71, 0.62, 0.535, 0.455, 0.385, 0.325, 0.245];
+const RAMP_C = [0.16, 0.32, 0.55, 0.8, 0.95, 1, 0.96, 0.86, 0.74, 0.62, 0.48];
+
+function oklabToLinear(L, a, b) {
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+  const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+  return [
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
+  ];
+}
+const inGamut = (rgb) => rgb.every((v) => v >= -1e-4 && v <= 1 + 1e-4);
+const encode = (v) => { v = Math.min(1, Math.max(0, v)); return v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055; };
+
+/** OKLCH to hex, reducing chroma until the colour fits in sRGB. */
+function oklch(L, C, H) {
+  const h = (H * Math.PI) / 180;
+  const at = (c) => oklabToLinear(L, c * Math.cos(h), c * Math.sin(h));
+  let rgb = at(C);
+  if (!inGamut(rgb)) {
+    let lo = 0, hi = C;
+    for (let i = 0; i < 24; i++) { const mid = (lo + hi) / 2; if (inGamut(at(mid))) lo = mid; else hi = mid; }
+    rgb = at(lo);
+  }
+  return '#' + rgb.map((v) => Math.round(encode(v) * 255).toString(16).padStart(2, '0')).join('');
+}
+function luminance(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function contrast(a, b) { const x = luminance(a), y = luminance(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+/** sRGB mix of two hex colours; t = share of b. Approximates an alpha overlay for the audit. */
+function mix(a, b, t) {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  return '#' + [16, 8, 0].map((sh) => Math.round(((pa >> sh) & 255) * (1 - t) + ((pb >> sh) & 255) * t).toString(16).padStart(2, '0')).join('');
+}
+const hexA = (hex, a) => hex + Math.round(a * 255).toString(16).padStart(2, '0');
+
+const raw = (hex) => ({ hex, ref: null });
+function ramp(name, spec) {
+  const r = { name };
+  STEPS.forEach((s, i) => { r[s] = { hex: oklch(RAMP_L[i], spec.c * RAMP_C[i], spec.h), ref: `--ds-${name}-${s}`, step: s }; });
+  return r;
+}
+function fixedRamp(name, hexes) {
+  const r = { name };
+  STEPS.forEach((s, i) => { r[s] = { hex: hexes[i], ref: `--ds-${name}-${s}`, step: s }; });
+  return r;
+}
+/** First step (in order) whose contrast against `against` reaches `min`. */
+function pick(r, steps, against, min) {
+  for (const s of steps) if (contrast(r[s].hex, against) >= min) return r[s];
+  return r[steps[steps.length - 1]];
+}
+function pickL(spec, Ls, against, min) {
+  for (const L of Ls) { const hex = oklch(L, spec.c, spec.h); if (contrast(hex, against) >= min) return raw(hex); }
+  return raw(oklch(Ls[Ls.length - 1], spec.c, spec.h));
+}
+const shift = (r, tok, n) => r[STEPS[Math.max(0, Math.min(STEPS.length - 1, STEPS.indexOf(tok.step) + n))]];
+
+const STATUS = { red: { h: 25, c: 0.2 }, green: { h: 152, c: 0.15 }, amber: { h: 72, c: 0.17 }, blue: { h: 258, c: 0.17 } };
+
+function buildGenerated(s) {
+  const [pn, an, nn] = s.names;
+  const P = ramp(pn, s.primary), A = ramp(an, s.accent), N = ramp(nn, s.neutral);
+  const R = ramp('red', STATUS.red), G = ramp('green', STATUS.green), Y = ramp('amber', STATUS.amber), B = ramp('blue', STATUS.blue);
+  const W = raw('#ffffff');
+  const L = {};
+  L.bg = N[50]; L.surface = W; L.sunken = N[100]; L.hover = N[100]; L.border = N[200]; L.borderStrong = N[400];
+  L.text = N[900]; L.muted = N[700]; L.subtle = pick(N, [500, 600, 700], '#ffffff', 4.5); L.textDisabled = N[400];
+  L.primary = s.primaryLight ? P[s.primaryLight] : pick(P, [600, 700, 800], '#ffffff', 4.5);
+  L.primaryHover = shift(P, L.primary, 1); L.primaryActive = shift(P, L.primary, 2);
+  L.primarySubtle = P[50]; L.primaryText = pick(P, [600, 700, 800, 900], P[50].hex, 4.5); L.onPrimary = W;
+  L.accent = pick(A, [500, 600, 700], '#ffffff', 3); L.accentSubtle = A[50]; L.accentText = pick(A, [600, 700, 800, 900], A[50].hex, 4.5);
+  L.danger = pick(R, [600, 700], '#ffffff', 4.5); L.dangerHover = shift(R, L.danger, 1); L.dangerSubtle = R[50]; L.dangerText = pick(R, [600, 700, 800], R[50].hex, 4.5); L.onDanger = W;
+  L.success = G[600]; L.successSubtle = G[50]; L.successText = pick(G, [600, 700, 800, 900], G[50].hex, 4.5);
+  L.warning = Y[500]; L.warningSubtle = Y[50]; L.warningText = pick(Y, [700, 800, 900], Y[50].hex, 4.5);
+  L.info = B[600]; L.infoSubtle = B[50]; L.infoText = pick(B, [600, 700, 800], B[50].hex, 4.5);
+  L.focus = pick(P, [500, 600, 700, 800], '#ffffff', 3);
+  L.controlBg = W; L.controlBorder = pick(N, [400, 500, 600], '#ffffff', 3); L.controlBorderHover = shift(N, L.controlBorder, 1); L.switchOff = L.controlBorder;
+
+  const nspec = { h: s.neutral.h, c: s.neutral.c * 0.9 };
+  const nd = (l) => raw(oklch(l, nspec.c, nspec.h));
+  const tint = (spec, l, k) => raw(oklch(l, spec.c * k, spec.h));
+  const D = {};
+  D.bg = nd(0.165); D.surface = nd(0.21); D.sunken = nd(0.14); D.hover = nd(0.265); D.border = nd(0.30); D.borderStrong = nd(0.45);
+  D.text = nd(0.965); D.muted = nd(0.83); D.subtle = pickL(nspec, [0.66, 0.70, 0.74, 0.78], D.surface.hex, 4.5); D.textDisabled = nd(0.45);
+  D.primary = s.primaryDark ? P[s.primaryDark] : P[400];
+  D.primaryHover = shift(P, D.primary, -1); D.primaryActive = shift(P, D.primary, -2);
+  D.primarySubtle = tint(s.primary, 0.29, 0.35); D.primaryText = pick(P, [300, 200, 100], D.primarySubtle.hex, 4.5);
+  D.onPrimary = raw(oklch(0.19, Math.min(s.primary.c, 0.05), s.primary.h));
+  D.accent = A[400]; D.accentSubtle = tint(s.accent, 0.29, 0.35); D.accentText = pick(A, [300, 200, 100], D.accentSubtle.hex, 4.5);
+  D.danger = R[400]; D.dangerHover = R[300]; D.dangerSubtle = tint(STATUS.red, 0.29, 0.3); D.dangerText = pick(R, [300, 200, 100], D.dangerSubtle.hex, 4.5); D.onDanger = nd(0.14);
+  D.success = G[400]; D.successSubtle = tint(STATUS.green, 0.29, 0.3); D.successText = pick(G, [300, 200, 100], D.successSubtle.hex, 4.5);
+  D.warning = Y[400]; D.warningSubtle = tint(STATUS.amber, 0.30, 0.3); D.warningText = pick(Y, [300, 200, 100], D.warningSubtle.hex, 4.5);
+  D.info = B[400]; D.infoSubtle = tint(STATUS.blue, 0.29, 0.3); D.infoText = pick(B, [300, 200, 100], D.infoSubtle.hex, 4.5);
+  D.focus = pick(P, [300, 200, 100], D.surface.hex, 3);
+  D.controlBg = nd(0.165); D.controlBorder = pickL(nspec, [0.44, 0.48, 0.52, 0.56, 0.6], D.surface.hex, 3); D.controlBorderHover = nd(0.68); D.switchOff = D.controlBorder;
+
+  // Gradient partner: the primary ramp with its hue rotated, used at the same steps as the primary.
+  const g = s.grad || { shift: 40 };
+  const E = ramp(`${pn}-alt`, { h: s.primary.h + g.shift, c: g.c ?? s.primary.c });
+  const grad = {
+    light: { end: E[L.primary.step].hex, deepStart: P[800].hex, deepEnd: E[800].hex },
+    dark: { end: E[D.primary.step].hex, deepStart: P[800].hex, deepEnd: E[800].hex },
+  };
+
+  return { light: L, dark: D, grad, ramps: [P, A, N, R, G, Y, B, E], roles: ['primary', 'accent', 'neutral', 'danger', 'success', 'warning', 'info', 'gradient partner'] };
+}
+
+/** The tokens currently in src/styles/tokens.css, verbatim. */
+function buildShipped() {
+  const T = fixedRamp('teal', ['#effcf9', '#c9f5ec', '#94eadb', '#58d7c5', '#2bbcab', '#149f91', '#0e8076', '#0f6660', '#11524e', '#124441', '#032826']);
+  const C = fixedRamp('coral', ['#fff4f1', '#ffe5de', '#ffcfc2', '#ffad98', '#fd7f5f', '#f55a35', '#e23e17', '#be3010', '#9d2b12', '#822916', '#471106']);
+  const S = fixedRamp('slate', ['#f6f8f9', '#edf1f3', '#dbe2e6', '#bcc8cf', '#91a1ab', '#6b7c87', '#53626c', '#424e57', '#2c353c', '#1b2227', '#0f1417']);
+  const x = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, raw(v)]));
+  const L = x({
+    bg: '#f6f8f9', surface: '#ffffff', sunken: '#edf1f3', hover: '#edf1f3', border: '#dbe2e6', borderStrong: '#91a1ab',
+    text: '#1b2227', muted: '#53626c', subtle: '#6b7c87', textDisabled: '#91a1ab',
+    primary: '#0f6660', primaryHover: '#11524e', primaryActive: '#124441', primarySubtle: '#effcf9', primaryText: '#0f6660', onPrimary: '#ffffff',
+    accent: '#e23e17', accentSubtle: '#fff4f1', accentText: '#be3010',
+    danger: '#cd2b31', dangerHover: '#a61e23', dangerSubtle: '#fef2f2', dangerText: '#a61e23', onDanger: '#ffffff',
+    success: '#16864a', successSubtle: '#effaf2', successText: '#146b3e',
+    warning: '#f59f0a', warningSubtle: '#fff8eb', warningText: '#a85a06',
+    info: '#2463eb', infoSubtle: '#eff6ff', infoText: '#1d4fd7',
+    focus: '#149f91', controlBg: '#ffffff', controlBorder: '#bcc8cf', controlBorderHover: '#91a1ab', switchOff: '#91a1ab',
+  });
+  const D = x({
+    bg: '#0f1417', surface: '#1b2227', sunken: '#0b0f11', hover: '#2c353c', border: '#2c353c', borderStrong: '#53626c',
+    text: '#f6f8f9', muted: '#bcc8cf', subtle: '#91a1ab', textDisabled: '#53626c',
+    primary: '#2bbcab', primaryHover: '#58d7c5', primaryActive: '#94eadb', primarySubtle: '#1d383a', primaryText: '#58d7c5', onPrimary: '#032826',
+    accent: '#fd7f5f', accentSubtle: '#3b2f2f', accentText: '#ffad98',
+    danger: '#f87171', dangerHover: '#fca5a5', dangerSubtle: '#3b282d', dangerText: '#fca5a5', onDanger: '#0f1417',
+    success: '#22a45d', successSubtle: '#1c3730', successText: '#6ee7a1',
+    warning: '#fbbd3c', warningSubtle: '#3e3622', warningText: '#fcd581',
+    info: '#60a5fa', infoSubtle: '#1d2e4a', infoText: '#93c5fd',
+    focus: '#58d7c5', controlBg: '#0f1417', controlBorder: '#424e57', controlBorderHover: '#6b7c87', switchOff: '#6b7c87',
+  });
+  const E = ramp('teal-alt', { h: 226, c: 0.105 });
+  const grad = {
+    light: { end: E[700].hex, deepStart: T[800].hex, deepEnd: E[800].hex },
+    dark: { end: E[400].hex, deepStart: T[800].hex, deepEnd: E[800].hex },
+  };
+  return { light: L, dark: D, grad, ramps: [T, C, S, E], roles: ['primary', 'accent', 'neutral', 'gradient partner'] };
+}
+
+/** Gradient CSS and the colour stops text sits on, for one mode and style. */
+function gradientSet(theme, mode, style) {
+  const T = theme[mode], G = theme.grad[mode];
+  const dark = mode === 'dark';
+  if (style === 'vivid') {
+    const glow = mix(G.deepEnd, T.accent.hex, 0.3);
+    return {
+      btn: `linear-gradient(135deg in oklch, ${T.primary.hex}, ${G.end})`,
+      banner: `radial-gradient(120% 140% at 100% 0%, ${hexA(T.accent.hex, 0.3)}, transparent 55%), linear-gradient(135deg in oklch, ${G.deepStart}, ${G.deepEnd})`,
+      page: `radial-gradient(900px 360px at 0% -10%, ${hexA(T.primary.hex, dark ? 0.16 : 0.1)}, transparent 70%), radial-gradient(700px 300px at 100% 0%, ${hexA(T.accent.hex, dark ? 0.1 : 0.08)}, transparent 70%)`,
+      line: `linear-gradient(90deg in oklch, ${T.primary.hex}, ${G.end}, ${T.accent.hex})`,
+      meter: `linear-gradient(90deg in oklch, ${T.accent.hex}, ${mix(T.accent.hex, '#ffffff', 0.35)})`,
+      hover: dark ? 'rgb(255 255 255 / 0.14)' : 'rgb(0 0 0 / 0.12)',
+      btnStops: [T.primary.hex, G.end],
+      bannerStops: [G.deepStart, G.deepEnd, glow],
+      bannerTitle: '#ffffff', bannerText: mix('#ffffff', G.end, 0.1), bannerBorder: 'transparent', meterTrack: 'rgb(255 255 255 / 0.22)',
+    };
+  }
+  if (style === 'subtle') {
+    // Sheen moves away from the label colour so contrast only goes up: darker below on light, lighter above on dark.
+    const [top, bottom] = dark ? [mix(T.primary.hex, '#ffffff', 0.12), T.primary.hex] : [T.primary.hex, mix(T.primary.hex, '#000000', 0.14)];
+    const title = Math.min(contrast(T.primaryText.hex, T.primarySubtle.hex), contrast(T.primaryText.hex, T.accentSubtle.hex)) >= 4.5 ? T.primaryText.hex : T.text.hex;
+    return {
+      btn: `linear-gradient(180deg, ${top}, ${bottom})`,
+      banner: `linear-gradient(135deg in oklch, ${T.primarySubtle.hex}, ${T.accentSubtle.hex})`,
+      page: `radial-gradient(900px 320px at 0% -10%, ${hexA(T.primary.hex, dark ? 0.1 : 0.07)}, transparent 70%)`,
+      line: 'none',
+      meter: `linear-gradient(90deg in oklch, ${T.primary.hex}, ${G.end})`,
+      hover: dark ? 'rgb(255 255 255 / 0.12)' : 'rgb(0 0 0 / 0.1)',
+      btnStops: [top, bottom],
+      bannerStops: [T.primarySubtle.hex, T.accentSubtle.hex],
+      bannerTitle: title, bannerText: T.text.hex, bannerBorder: T.border.hex, meterTrack: T.border.hex,
+    };
+  }
+  return {
+    btn: 'none', banner: 'none', page: 'none', line: 'none', meter: 'none', hover: 'transparent',
+    btnStops: [T.primary.hex], bannerStops: [T.primarySubtle.hex],
+    bannerTitle: T.primaryText.hex, bannerText: T.text.hex, bannerBorder: T.border.hex, meterTrack: T.border.hex,
+  };
+}
+
+const SCHEMES = [
+  { id: 'shipped', name: 'Tide, as shipped', desc: 'The tokens in the repo today. Teal with a coral accent.', tag: 'Current', build: buildShipped },
+  { id: 'tide', name: 'Tide, refined', desc: 'The same teal and coral, retuned so every pairing passes AA.', tag: 'Recommended',
+    names: ['teal', 'coral', 'slate'], primary: { h: 186, c: 0.105 }, accent: { h: 35, c: 0.18 }, neutral: { h: 215, c: 0.014 }, grad: { shift: 40 } },
+  { id: 'harbour', name: 'Harbour', desc: 'Cobalt with a saffron accent. Gradients run cobalt to cerulean.', tag: 'Your pick',
+    names: ['cobalt', 'saffron', 'mist'], primary: { h: 264, c: 0.17 }, accent: { h: 78, c: 0.16 }, neutral: { h: 255, c: 0.014 }, grad: { shift: -40 } },
+  { id: 'fern', name: 'Fern', desc: 'Deep green with a berry accent. Success messages are green too, so they blend in.',
+    names: ['fern', 'berry', 'moss'], primary: { h: 152, c: 0.12 }, accent: { h: 350, c: 0.15 }, neutral: { h: 150, c: 0.01 }, grad: { shift: 40 } },
+  { id: 'graphite', name: 'Graphite', desc: 'Near-black actions with a marigold accent. Lets content lead.',
+    names: ['graphite', 'marigold', 'ash'], primary: { h: 255, c: 0.018 }, primaryLight: 900, primaryDark: 100, accent: { h: 62, c: 0.16 }, neutral: { h: 255, c: 0.008 }, grad: { shift: 0, c: 0.06 } },
+  { id: 'ember', name: 'Ember', desc: 'Brick red with a lagoon accent. Warm, but errors are red too.',
+    names: ['ember', 'lagoon', 'stone'], primary: { h: 33, c: 0.16 }, accent: { h: 200, c: 0.09 }, neutral: { h: 55, c: 0.01 }, grad: { shift: 28 } },
+];
+
+const AUDIT = [
+  ['Body text on page background', 'text', 'bg', 4.5, '1.4.3'],
+  ['Body text on cards', 'text', 'surface', 4.5, '1.4.3'],
+  ['Labels and hints', 'muted', 'surface', 4.5, '1.4.3'],
+  ['Placeholder and subtle text', 'subtle', 'controlBg', 4.5, '1.4.3'],
+  ['Primary button label', 'onPrimary', 'primary', 4.5, '1.4.3'],
+  ['Primary button label, hovered', 'onPrimary', 'primaryHover', 4.5, '1.4.3'],
+  ['Links and primary text', 'primaryText', 'surface', 4.5, '1.4.3'],
+  ['Secondary button and active tab', 'primaryText', 'primarySubtle', 4.5, '1.4.3'],
+  ['Danger button label', 'onDanger', 'danger', 4.5, '1.4.3'],
+  ['Error messages', 'dangerText', 'surface', 4.5, '1.4.3'],
+  ['Error alert text', 'dangerText', 'dangerSubtle', 4.5, '1.4.3'],
+  ['Warning alert text', 'warningText', 'warningSubtle', 4.5, '1.4.3'],
+  ['Success alert text', 'successText', 'successSubtle', 4.5, '1.4.3'],
+  ['Info alert text', 'infoText', 'infoSubtle', 4.5, '1.4.3'],
+  ['Text field border', 'controlBorder', 'surface', 3, '1.4.11'],
+  ['Checkbox and switch, off', 'switchOff', 'surface', 3, '1.4.11'],
+  ['Checked or selected fill', 'primary', 'surface', 3, '1.4.11'],
+  ['Keyboard focus ring', 'focus', 'surface', 3, '1.4.11'],
+];
+
+const cache = new Map();
+function themeFor(id) {
+  if (!cache.has(id)) {
+    const s = SCHEMES.find((x) => x.id === id);
+    cache.set(id, s.build ? s.build() : buildGenerated(s));
+  }
+  return cache.get(id);
+}
+function audit(theme, style = 'none') {
+  const rows = AUDIT.map(([label, fg, bg, min, crit]) => {
+    const l = contrast(theme.light[fg].hex, theme.light[bg].hex);
+    const d = contrast(theme.dark[fg].hex, theme.dark[bg].hex);
+    return {
+      label, fg, min, crit, l, d, lp: l >= min, dp: d >= min,
+      light: { fg: theme.light[fg].hex, bg: theme.light[bg].hex },
+      dark: { fg: theme.dark[fg].hex, bg: theme.dark[bg].hex },
+    };
+  });
+  if (style === 'none') return rows;
+  // Text on a gradient must pass against every stop it can sit on, so test the worst one.
+  const gl = gradientSet(theme, 'light', style), gd = gradientSet(theme, 'dark', style);
+  const worst = (fg, stops) => Math.min(...stops.map((s) => contrast(fg, s)));
+  const grow = (label, pick) => {
+    const [lf, ls, lcss] = pick(theme.light, gl), [df, ds, dcss] = pick(theme.dark, gd);
+    const l = worst(lf, ls), d = worst(df, ds);
+    return { label, fg: 'gradient', min: 4.5, crit: '1.4.3', l, d, lp: l >= 4.5, dp: d >= 4.5,
+      light: { fg: lf, bg: ls[0], css: lcss }, dark: { fg: df, bg: ds[0], css: dcss } };
+  };
+  rows.push(
+    grow('Primary button label on gradient', (t, g) => [t.onPrimary.hex, g.btnStops, g.btn]),
+    grow('Banner heading on gradient', (t, g) => [g.bannerTitle, g.bannerStops, g.banner]),
+    grow('Banner text on gradient', (t, g) => [g.bannerText, g.bannerStops, g.banner]),
+  );
+  return rows;
+}
+/* ENGINE END */
+
+const DENSITY = {
+  compact: { label: 'Compact', h: [28, 32, 40], padx: 10, card: 16, stack: 12, gapx: 12, fieldGap: 4, fsInput: 14 },
+  comfortable: { label: 'Comfortable', h: [32, 40, 48], padx: 12, card: 24, stack: 16, gapx: 16, fieldGap: 6, fsInput: 16 },
+  spacious: { label: 'Spacious', h: [40, 48, 56], padx: 16, card: 32, stack: 24, gapx: 20, fieldGap: 8, fsInput: 16 },
+};
+const CORNERS = {
+  sharp: { label: 'Sharp', sm: 2, md: 3, lg: 4, xl: 6, btn: 3 },
+  soft: { label: 'Soft', sm: 4, md: 8, lg: 12, xl: 16, btn: 8 },
+  round: { label: 'Round', sm: 6, md: 12, lg: 18, xl: 24, btn: 999 },
+};
+const TOKEN_NAMES = {
+  bg: 'bg', surface: 'surface', sunken: 'surface-sunken', hover: 'surface-hover', border: 'border', borderStrong: 'border-strong',
+  text: 'text', muted: 'text-muted', subtle: 'text-subtle', textDisabled: 'text-disabled',
+  primary: 'primary', primaryHover: 'primary-hover', primaryActive: 'primary-active', primarySubtle: 'primary-subtle', primaryText: 'primary-text', onPrimary: 'on-primary',
+  accent: 'accent', accentSubtle: 'accent-subtle', accentText: 'accent-text',
+  danger: 'danger', dangerHover: 'danger-hover', dangerSubtle: 'danger-subtle', dangerText: 'danger-text', onDanger: 'on-danger',
+  success: 'success', successSubtle: 'success-subtle', successText: 'success-text',
+  warning: 'warning', warningSubtle: 'warning-subtle', warningText: 'warning-text',
+  info: 'info', infoSubtle: 'info-subtle', infoText: 'info-text',
+  focus: 'focus-ring', controlBg: 'control-bg', controlBorder: 'control-border', controlBorderHover: 'control-border-hover', switchOff: 'control-border-strong',
+};
+
+const state = { scheme: 'harbour', density: 'comfortable', corners: 'soft', gradients: 'vivid', mode: 'dark', vision: 'none' };
+const GRADIENT_LABEL = { none: 'No gradients', subtle: 'Subtle gradients', vivid: 'Vivid gradients' };
+const MODE_LABEL = { light: 'Light', dark: 'Dark', system: 'Match system' };
+try { Object.assign(state, JSON.parse(localStorage.getItem('tide-theme-lab') || '{}')); } catch (e) { /* storage unavailable */ }
+if (!SCHEMES.some((s) => s.id === state.scheme)) state.scheme = 'harbour';
+if (!GRADIENT_LABEL[state.gradients]) state.gradients = 'vivid';
+if (!MODE_LABEL[state.mode]) state.mode = 'dark';
+const save = () => { try { localStorage.setItem('tide-theme-lab', JSON.stringify(state)); } catch (e) { /* ignore */ } };
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ---------- Mockup markup ---------- */
+const ICON = {
+  check: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1Zm3.03 4.47a.75.75 0 0 0-1.06 0L7 8.44 6.03 7.47a.75.75 0 1 0-1.06 1.06l1.5 1.5a.75.75 0 0 0 1.06 0l3.5-3.5a.75.75 0 0 0 0-1.06Z"/></svg>',
+  warn: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M6.7 1.9a1.5 1.5 0 0 1 2.6 0l5.8 10.3A1.5 1.5 0 0 1 13.8 14.5H2.2a1.5 1.5 0 0 1-1.3-2.3L6.7 1.9ZM8 10.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM8 5a.75.75 0 0 0-.75.75v3a.75.75 0 0 0 1.5 0v-3A.75.75 0 0 0 8 5Z"/></svg>',
+  error: '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1Zm0 9.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM8 4a.9.9 0 0 0-.9.95l.2 4a.7.7 0 0 0 1.4 0l.2-4A.9.9 0 0 0 8 4Z"/></svg>',
+  info: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1Zm0 6a.75.75 0 0 0-.75.75v3.5a.75.75 0 0 0 1.5 0v-3.5A.75.75 0 0 0 8 7Zm0-3a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg>',
+  chev: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="m4 6 4 4 4-4"/></svg>',
+  logo: '<span class="m-logo" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 14c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3" fill="none" stroke="var(--c-onPrimary)" stroke-width="2" stroke-linecap="round"/><circle cx="17.5" cy="7.5" r="1.6" fill="var(--c-accent)"/></svg></span>',
+};
+
+function mockup(p) {
+  return `
+<div class="m" data-mode="${p === 'l' ? 'light' : 'dark'}">
+  <div class="m-top">
+    <span class="m-brand">${ICON.logo}Tide</span>
+    <nav class="m-tabs" aria-label="Mockup navigation">
+      <a href="#${p}-projects" aria-current="page">Projects</a><a href="#${p}-deploys">Deploys</a><a href="#${p}-settings">Settings</a>
+    </nav>
+    <span class="m-avatar" aria-hidden="true">AL</span>
+  </div>
+  <div class="m-body">
+    <section class="m-banner" aria-label="Plan usage">
+      <div class="m-banner-top">
+        <div><b class="m-banner-title">Pro plan</b><p>1,240 of 2,000 build minutes used this month. Resets on 1 November.</p></div>
+        <button class="m-btn" type="button">View usage</button>
+      </div>
+      <div class="m-meter" role="meter" aria-label="Build minutes used" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="1240"><span></span></div>
+    </section>
+    <div class="m-alert m-alert--success" role="status">${ICON.check}<div><b>Deploy finished</b>acme-web is live at tide.app/acme in 48 seconds.</div></div>
+    <section class="m-card">
+      <header><h3>New project</h3><p>Connect a repository and choose where it runs.</p></header>
+      <div class="m-form">
+        <div class="m-field">
+          <label class="m-label" for="${p}-name">Project name<span class="m-req" aria-hidden="true">*</span></label>
+          <div class="m-ctl"><input id="${p}-name" value="acme-web" required></div>
+        </div>
+        <div class="m-field">
+          <label class="m-label" for="${p}-slug">Address</label>
+          <div class="m-ctl"><span class="m-adorn">tide.app/</span><input id="${p}-slug" value="acme" aria-describedby="${p}-slug-hint"></div>
+          <p class="m-hint" id="${p}-slug-hint">Lowercase letters, numbers and hyphens.</p>
+        </div>
+        <div class="m-field m-span">
+          <label class="m-label" for="${p}-repo">Repository<span class="m-req" aria-hidden="true">*</span></label>
+          <div class="m-ctl m-ctl--err"><input id="${p}-repo" value="git@github.com:acme/web" aria-invalid="true" aria-describedby="${p}-repo-err"></div>
+          <p class="m-err" id="${p}-repo-err">${ICON.error}Use an https address, for example https://github.com/acme/web</p>
+        </div>
+        <div class="m-field">
+          <label class="m-label" for="${p}-region">Region</label>
+          <div class="m-ctl m-select"><select id="${p}-region"><option>London (eu-west-2)</option><option>Frankfurt (eu-central-1)</option><option>Virginia (us-east-1)</option><option>Sydney (ap-southeast-2)</option></select>${ICON.chev}</div>
+        </div>
+        <div class="m-field">
+          <label class="m-label" for="${p}-branch">Production branch</label>
+          <div class="m-ctl"><input id="${p}-branch" placeholder="main"></div>
+        </div>
+        <fieldset class="m-span">
+          <legend>Who can see deploys</legend>
+          <div class="m-row">
+            <div class="m-choice"><input class="m-rd" type="radio" name="${p}-vis" id="${p}-vis-private" checked><label for="${p}-vis-private">Only me</label></div>
+            <div class="m-choice"><input class="m-rd" type="radio" name="${p}-vis" id="${p}-vis-team"><label for="${p}-vis-team">My team</label></div>
+            <div class="m-choice"><input class="m-rd" type="radio" name="${p}-vis" id="${p}-vis-public"><label for="${p}-vis-public">Anyone with the link</label></div>
+          </div>
+        </fieldset>
+        <div class="m-col m-span">
+          <div class="m-choice"><input class="m-cb" type="checkbox" id="${p}-invite" checked><label for="${p}-invite">Invite my team<small>Sends an email to the 6 people in Acme.</small></label></div>
+          <div class="m-choice"><input class="m-cb" type="checkbox" id="${p}-tests"><label for="${p}-tests">Run tests before each deploy</label></div>
+          <div class="m-choice m-choice--between"><label for="${p}-alerts">Email me when a deploy fails</label><input class="m-sw" type="checkbox" role="switch" id="${p}-alerts" checked></div>
+          <div class="m-choice m-choice--between"><label for="${p}-previews">Preview deploys for pull requests</label><input class="m-sw" type="checkbox" role="switch" id="${p}-previews"></div>
+        </div>
+        <div class="m-field m-span">
+          <div class="m-range-head"><label class="m-label" for="${p}-conc">Build concurrency</label><output id="${p}-conc-out" for="${p}-conc">4 builds</output></div>
+          <input class="m-range" type="range" id="${p}-conc" min="1" max="8" value="4" data-out="${p}-conc-out">
+        </div>
+      </div>
+      <footer><button class="m-btn m-btn--outline" type="button">Cancel</button><button class="m-btn m-btn--primary" type="button">Create project</button></footer>
+    </section>
+    <div class="m-strip" aria-label="Button variants">
+      <button class="m-btn m-btn--primary" type="button">Primary</button>
+      <button class="m-btn m-btn--secondary" type="button">Secondary</button>
+      <button class="m-btn m-btn--outline" type="button">Outline</button>
+      <button class="m-btn m-btn--ghost" type="button">Ghost</button>
+      <button class="m-btn m-btn--danger" type="button">Delete</button>
+      <button class="m-btn m-btn--primary" type="button" disabled>Disabled</button>
+    </div>
+    <div class="m-alerts">
+      <div class="m-alert m-alert--info">${ICON.info}<div><b>New region</b>Sydney is now available.</div></div>
+      <div class="m-alert m-alert--warning">${ICON.warn}<div><b>Build minutes at 80%</b>Resets on 1 November.</div></div>
+      <div class="m-alert m-alert--danger m-span" role="alert">${ICON.error}<div><b>Deploy failed</b>npm run build exited with code 1 on step 3 of 5.</div></div>
+    </div>
+  </div>
+</div>`;
+}
+
+/* ---------- Rendering ---------- */
+function applyVars(el, tokens, g) {
+  for (const [k, v] of Object.entries(tokens)) el.style.setProperty(`--c-${k}`, v.hex);
+  ['btn', 'banner', 'page', 'line', 'meter', 'hover'].forEach((k) => el.style.setProperty(`--g-${k}`, g[k]));
+  el.style.setProperty('--c-bannerTitle', g.bannerTitle);
+  el.style.setProperty('--c-bannerText', g.bannerText);
+  el.style.setProperty('--c-bannerBorder', g.bannerBorder);
+  el.style.setProperty('--c-meterTrack', g.meterTrack);
+}
+function applyLayoutVars(el) {
+  const d = DENSITY[state.density], c = CORNERS[state.corners];
+  const set = (k, v) => el.style.setProperty(k, v);
+  set('--h', d.h[1] + 'px'); set('--padx', d.padx + 'px'); set('--card', d.card + 'px'); set('--stack', d.stack + 'px');
+  set('--gapx', d.gapx + 'px'); set('--field-gap', d.fieldGap + 'px'); set('--fs-input', d.fsInput + 'px');
+  set('--r-sm', c.sm + 'px'); set('--r-md', c.md + 'px'); set('--r-lg', c.lg + 'px'); set('--btn-r', c.btn + 'px');
+}
+
+function renderSchemes() {
+  $('schemes').innerHTML = SCHEMES.map((s) => {
+    const t = themeFor(s.id);
+    const a = audit(t, state.gradients);
+    const lp = a.filter((r) => r.lp).length, dp = a.filter((r) => r.dp).length;
+    const dots = [t.light.primary, t.light.accent, t.light.text, t.dark.primary].map((c) => `<i style="background:${c.hex}"></i>`).join('');
+    const tag = s.tag ? `<span class="tag${s.tag === 'Current' ? ' tag--muted' : ''}">${s.tag}</span>` : '';
+    return `<label class="scheme"><input type="radio" name="scheme" id="scheme-${s.id}" value="${s.id}"${s.id === state.scheme ? ' checked' : ''}>
+      <span class="dots" aria-hidden="true">${dots}</span>
+      <span class="scheme-name">${esc(s.name)} ${tag}</span>
+      <span class="scheme-desc">${esc(s.desc)}</span>
+      <span class="scheme-score">Light ${lp}/${a.length} · Dark ${dp}/${a.length}</span></label>`;
+  }).join('');
+}
+
+function ratioCell(ratio, pass, c, isLine) {
+  const bg = `background-color:${c.bg};${c.css ? `background-image:${c.css};` : ''}`;
+  const sample = isLine
+    ? `<span class="sample sample--line" style="${bg}box-shadow:inset 0 0 0 3px ${c.fg}" aria-hidden="true"></span>`
+    : `<span class="sample" style="${bg}color:${c.fg}" aria-hidden="true">Aa</span>`;
+  return `<td class="num"><span class="ratio">${sample}${ratio.toFixed(2)}:1 <span class="pill ${pass ? 'pill--pass' : 'pill--fail'}">${pass ? 'Pass' : 'Fail'}</span></span></td>`;
+}
+
+function render() {
+  const theme = themeFor(state.scheme);
+  const scheme = SCHEMES.find((s) => s.id === state.scheme);
+  const d = DENSITY[state.density], c = CORNERS[state.corners];
+
+  // Mockups
+  [['l', 'pane-light', 'light'], ['d', 'pane-dark', 'dark']].forEach(([p, id, mode]) => {
+    const host = $(id);
+    if (!host.firstElementChild) host.innerHTML = mockup(p);
+    const m = host.firstElementChild;
+    applyVars(m, theme[mode], gradientSet(theme, mode, state.gradients));
+    applyLayoutVars(m);
+  });
+  $('panes').dataset.vision = state.vision;
+  $('panes').dataset.default = state.mode;
+  const cap = `${scheme.name} · ${d.label} · ${c.label} · ${GRADIENT_LABEL[state.gradients]}`;
+  $('cap-light').textContent = cap;
+  $('cap-dark').textContent = cap;
+  $('lbl-light').textContent = state.mode === 'light' ? 'Light · default' : 'Light';
+  $('lbl-dark').textContent = state.mode === 'dark' ? 'Dark · default' : 'Dark';
+  $('gradients-note').textContent = {
+    none: 'Flat colour everywhere.',
+    subtle: 'A gentle sheen on primary buttons, a soft glow behind the page and a tinted banner.',
+    vivid: 'Gradient buttons and logo, a deep gradient banner with an accent glow, and a gradient rule under the top bar.',
+  }[state.gradients];
+
+  // Audit
+  const rows = audit(theme, state.gradients);
+  const lp = rows.filter((r) => r.lp).length, dp = rows.filter((r) => r.dp).length;
+  const pillFor = (n, mode) => `<span class="pill ${n === rows.length ? 'pill--pass' : 'pill--fail'}">${mode} ${n}/${rows.length} pass</span>`;
+  $('audit-summary').innerHTML = pillFor(lp, 'Light') + pillFor(dp, 'Dark');
+  $('audit-body').innerHTML = rows.map((r) => {
+    const line = r.min === 3;
+    const need = r.fg === 'gradient' ? `${r.min}:1 at every stop · ${r.crit}` : `${r.min}:1 · ${r.crit}`;
+    return `<tr><td>${esc(r.label)}</td>
+      ${ratioCell(r.l, r.lp, r.light, line)}
+      ${ratioCell(r.d, r.dp, r.dark, line)}
+      <td class="crit">${need}</td></tr>`;
+  }).join('');
+
+  const h = d.h[1], hSm = d.h[0];
+  const checks = [
+    { title: 'Target size', status: hSm >= 24 ? (h >= 44 ? 'pass' : 'pass') : 'fail',
+      label: hSm >= 24 ? 'Pass' : 'Fail',
+      note: `Controls are ${hSm}–${d.h[2]}px tall (${h}px by default). WCAG 2.2 asks for at least 24px (2.5.8). ${h >= 44 ? 'Default controls also meet the 44px enhanced target.' : 'Use the large size on touch-first screens to reach the 44px enhanced target.'}` },
+    { title: 'Text in inputs', status: d.fsInput >= 16 ? 'pass' : 'fail', label: d.fsInput >= 16 ? 'Pass' : 'Check',
+      note: d.fsInput >= 16 ? `Inputs use ${d.fsInput}px text, so iOS Safari won't zoom in when a field is focused.` : `Inputs use ${d.fsInput}px text. iOS Safari zooms the page when focusing text under 16px.` },
+    { title: 'Colour is never the only signal', status: 'info', label: 'Built in',
+      note: 'Errors pair a red border with an icon and a written message. Required fields carry an asterisk. Switch the preview to Achromatopsia to check.' },
+    { title: 'Labels and descriptions', status: 'info', label: 'Built in',
+      note: 'Every control has a real <label>. Hints and errors are linked with aria-describedby, and invalid fields set aria-invalid.' },
+    { title: 'Visible keyboard focus', status: rows.find((r) => r.fg === 'focus').lp && rows.find((r) => r.fg === 'focus').dp ? 'pass' : 'fail',
+      label: rows.find((r) => r.fg === 'focus').lp && rows.find((r) => r.fg === 'focus').dp ? 'Pass' : 'Fail',
+      note: 'A 2px ring with a 2px offset appears on keyboard focus only. Press Tab inside the mockups to see it.' },
+    { title: 'Reduced motion', status: 'info', label: 'Built in',
+      note: 'Transitions and the loading spinner switch off when the system asks for reduced motion.' },
+  ];
+  $('checklist').innerHTML = checks.map((k) => `<li><strong>${esc(k.title)}</strong><span class="pill pill--${k.status}">${k.label}</span><span class="note">${esc(k.note)}</span></li>`).join('');
+
+  // Ramps
+  $('ramps').innerHTML = theme.ramps.map((r, i) => `
+    <div class="ramp">
+      <div class="ramp-name">${esc(r.name)}<small>${theme.roles[i]}</small></div>
+      <div class="ramp-steps">${STEPS.map((s) => {
+        const hex = r[s].hex;
+        const ink = contrast(hex, '#ffffff') >= 4.5 ? '#ffffff' : '#111111';
+        return `<div style="background:${hex};color:${ink}" title="${r.name} ${s} ${hex}"><span>${s}</span><span>${hex}</span></div>`;
+      }).join('')}</div>
+    </div>`).join('');
+
+  // Spacing
+  $('scale').innerHTML = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16].map((s) =>
+    `<div class="scale-row"><code>--ds-space-${s}</code><span><span class="bar" style="display:block;width:${s * 4 * 2}px;max-width:100%"></span></span><span class="px">${s * 4}px</span></div>`).join('');
+  $('specs').innerHTML = [
+    ['Control heights', `${d.h[0]} / ${d.h[1]} / ${d.h[2]}px`],
+    ['Control side padding', `${d.padx}px`],
+    ['Text in inputs', `${d.fsInput}px`],
+    ['Card padding', `${d.card}px`],
+    ['Gap between fields', `${d.stack}px down · ${d.gapx}px across`],
+    ['Label to field', `${d.fieldGap}px`],
+    ['Corner radius', `${c.sm} / ${c.md} / ${c.lg} / ${c.xl}px`],
+    ['Button corners', c.btn > 100 ? 'Pill' : `${c.btn}px`],
+  ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  $('density-note').textContent = `Default control height ${h}px. Text in inputs ${d.fsInput}px.`;
+
+  // Export
+  const gLabel = { none: 'None', subtle: 'Subtle', vivid: 'Vivid' }[state.gradients];
+  const summary = `Apply this Tide theme: palette "${scheme.name}", density "${d.label}", corners "${c.label}", gradients "${gLabel}", default mode "${MODE_LABEL[state.mode]}".`;
+  $('choice-line').textContent = summary;
+  $('css-out').value = exportCss(theme, scheme, d, c);
+
+  // Sync control state
+  document.querySelectorAll('input[name="scheme"]').forEach((i) => { i.checked = i.value === state.scheme; });
+  $(`density-${state.density}`).checked = true;
+  $(`corners-${state.corners}`).checked = true;
+  $(`gradients-${state.gradients}`).checked = true;
+  $(`mode-${state.mode}`).checked = true;
+  $('vision').value = state.vision;
+}
+
+function exportCss(theme, scheme, d, c) {
+  const out = [];
+  const usage = { light: '<ThemeProvider theme="light">', dark: '<ThemeProvider theme="dark">', system: '<ThemeProvider theme="system">' }[state.mode];
+  out.push(`/* Tide design tokens: ${scheme.name}, ${d.label} density, ${c.label} corners, ${GRADIENT_LABEL[state.gradients].toLowerCase()}.`);
+  out.push(`   Default mode: ${MODE_LABEL[state.mode].toLowerCase()} (use ${usage}).`);
+  out.push(`   Generated by Tide Theme Lab. Semantic tokens (--ds-color-*) are what components use. */`, '');
+  out.push(':root {');
+  theme.ramps.forEach((r, i) => {
+    out.push(`  /* ${r.name} (${theme.roles[i]}) */`);
+    STEPS.forEach((s) => out.push(`  ${r[s].ref}: ${r[s].hex};`));
+    out.push('');
+  });
+  out.push('  /* Radius */');
+  ['sm', 'md', 'lg', 'xl'].forEach((k) => out.push(`  --ds-radius-${k}: ${c[k]}px;`));
+  out.push('  --ds-radius-full: 9999px;');
+  out.push(`  --ds-radius-button: ${c.btn > 100 ? '9999px' : c.btn + 'px'};`, '');
+  out.push('  /* Control sizing and density */');
+  ['sm', 'md', 'lg'].forEach((k, i) => out.push(`  --ds-control-h-${k}: ${d.h[i] / 16}rem; /* ${d.h[i]}px */`));
+  out.push(`  --ds-control-pad-x: ${d.padx / 16}rem;`);
+  out.push(`  --ds-control-font-size: ${d.fsInput / 16}rem;`);
+  out.push(`  --ds-card-pad: ${d.card / 16}rem;`);
+  out.push(`  --ds-form-gap: ${d.stack / 16}rem;`);
+  out.push('}', '');
+  const block = (sel, mode) => {
+    const tokens = theme[mode];
+    out.push(`${sel} {`);
+    out.push(`  color-scheme: ${mode};`);
+    for (const [k, name] of Object.entries(TOKEN_NAMES)) {
+      const t = tokens[k];
+      out.push(`  --ds-color-${name}: ${t.ref ? `var(${t.ref})` : t.hex};`);
+    }
+    if (state.gradients !== 'none') {
+      const g = gradientSet(theme, mode, state.gradients);
+      out.push('', '  /* Gradients (solid --ds-color-* stays the fallback) */');
+      out.push(`  --ds-gradient-primary: ${g.btn};`);
+      out.push(`  --ds-gradient-banner: ${g.banner};`);
+      out.push(`  --ds-gradient-page: ${g.page};`);
+      if (g.line !== 'none') out.push(`  --ds-gradient-line: ${g.line};`);
+      out.push(`  --ds-gradient-meter: ${g.meter};`);
+      out.push(`  --ds-color-on-banner: ${g.bannerTitle};`);
+      out.push(`  --ds-color-on-banner-muted: ${g.bannerText};`);
+    }
+    out.push('}', '');
+  };
+  if (state.mode === 'dark') {
+    block(":root,\n[data-theme='dark']", 'dark');
+    block("[data-theme='light']", 'light');
+  } else {
+    block(":root,\n[data-theme='light']", 'light');
+    block("[data-theme='dark']", 'dark');
+  }
+  return out.join('\n');
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('change', (e) => {
+  const t = e.target;
+  if (t.name === 'scheme') state.scheme = t.value;
+  else if (t.name === 'density') state.density = t.value;
+  else if (t.name === 'corners') state.corners = t.value;
+  else if (t.name === 'mode') state.mode = t.value;
+  else if (t.id === 'vision') state.vision = t.value;
+  else if (t.name === 'gradients') {
+    state.gradients = t.value;
+    save();
+    renderSchemes(); // scores include the gradient checks
+    render();
+    $(`gradients-${state.gradients}`).focus();
+    return;
+  } else return;
+  save();
+  render();
+});
+document.addEventListener('input', (e) => {
+  const t = e.target;
+  if (t.classList && t.classList.contains('m-range')) {
+    const n = Number(t.value);
+    document.querySelectorAll('.m-range').forEach((r) => { r.value = n; $(r.dataset.out).textContent = `${n} build${n === 1 ? '' : 's'}`; });
+  }
+});
+document.addEventListener('click', (e) => {
+  const a = e.target.closest && e.target.closest('.m-tabs a');
+  if (a) e.preventDefault();
+});
+
+async function copy(text, label) {
+  const status = $('copy-status');
+  try {
+    await navigator.clipboard.writeText(text);
+    status.textContent = `${label} copied.`;
+  } catch (err) {
+    const ta = $('css-out');
+    if (label === 'CSS') { ta.focus(); ta.select(); }
+    status.textContent = label === 'CSS' ? 'Copying is blocked here. The CSS is selected: press Ctrl+C (or ⌘C).' : 'Copying is blocked here. Select the summary above and copy it.';
+  }
+}
+$('copy-summary').addEventListener('click', () => copy($('choice-line').textContent, 'Summary'));
+$('copy-css').addEventListener('click', () => copy($('css-out').value, 'CSS'));
+
+renderSchemes();
+render();
+</script>

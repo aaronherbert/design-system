@@ -47,7 +47,8 @@
   gap: var(--ds-space-2);
   width: 100%;
   min-height: var(--ds-control-h-md);
-  padding-inline: var(--ds-space-3);
+  padding-inline: var(--ds-control-pad-x);
+  font-size: var(--ds-control-font-size); /* 16px+ stops iOS Safari zooming on focus */
   background: var(--ds-color-control-bg);
   border: 1px solid var(--ds-color-control-border);
   border-radius: var(--ds-radius-md);

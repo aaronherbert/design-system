@@ -12,6 +12,7 @@ export * from './components/Switch';
 export * from './components/Slider';
 export * from './components/Fieldset';
 export * from './components/Alert';
+export * from './components/Banner';
 export * from './components/Typography';
 
 export * from './layout/Stack';

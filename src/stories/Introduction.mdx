@@ -6,12 +6,12 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 Tide is a small, token-driven React design system with form controls and layout primitives for building apps.
 
-- **Colour.** The brand colour is a deep **teal**, with **coral** as a warm accent. **Slate** neutrals carry a slight blue-green tint so they sit well beside the teal. Every colour you use in an app is a *semantic* token (`--ds-color-primary`, `--ds-color-text-muted`, …), so light and dark themes switch automatically.
+- **Colour.** The Harbour palette. **Cobalt** is the brand colour, **saffron** is a warm accent, and **mist** neutrals carry a slight blue tint. Gradients run from cobalt to cerulean. Every colour you use in an app is a *semantic* token (`--ds-color-primary`, `--ds-color-text-muted`, …), so light and dark themes switch automatically. **Dark is the default theme.** Every text and control pairing passes WCAG 2.2 AA in both themes, including text on gradients.
 - **Type.** [Inter](https://rsms.me/inter/) for UI and body text (very readable at small sizes, with tabular numbers), [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) for headings, and [JetBrains Mono](https://www.jetbrains.com/lp/mono/) for code. All three are self-hosted variable fonts bundled through Fontsource.
-- **Spacing.** A 4px grid (`--ds-space-1` = 4px … `--ds-space-16` = 64px). Controls come in three heights: 32, 40 and 48px.
+- **Spacing.** A 4px grid (`--ds-space-1` = 4px … `--ds-space-16` = 64px) at comfortable density. Controls come in three heights (32, 40 and 48px), and text in inputs is 16px so iOS Safari doesn't zoom when a field gets focus. Corners are soft (4, 8, 12 and 16px).
 - **Accessibility.** Every control is a native element underneath. Labels, hints and errors are wired up with `aria-describedby` / `aria-invalid`, and focus rings are always visible on keyboard focus.
 
-Use the **Theme** toolbar button above to switch every story between light and dark.
+Use the **Theme** toolbar button above to switch every story between dark and light.
 
 ## Using it in an app
 
@@ -26,7 +26,7 @@ import { ThemeProvider, TextField, Button, Stack } from '@aaronherbert/design-sy
 
 export function App() {
   return (
-    <ThemeProvider theme="system">
+    <ThemeProvider theme="dark">
       <Stack gap={4}>
         <TextField label="Email" type="email" />
         <Button>Continue</Button>
@@ -39,7 +39,8 @@ export function App() {
 ## Token naming
 
 - `--ds-color-*`: semantic colours. **Use these in apps.**
-- `--ds-teal-*`, `--ds-coral-*`, `--ds-slate-*`: the raw palette. Prefer the semantic tokens.
+- `--ds-gradient-*`: gradients (primary, banner, line, meter, page). Always layered over a solid colour as a fallback.
+- `--ds-cobalt-*`, `--ds-saffron-*`, `--ds-mist-*`, `--ds-cobalt-alt-*`: the raw palette. Prefer the semantic tokens.
 - `--ds-space-*`: margins, padding and gaps
 - `--ds-text-*`, `--ds-weight-*`, `--ds-font-*`: typography
 - `--ds-radius-*`, `--ds-shadow-*`: shape and elevation

@@ -16,12 +16,12 @@ npm run build-storybook  # static Storybook → storybook-static/
 
 ## What's inside
 
-- **Theme.** Teal brand colour, coral accent and tinted slate neutrals, with light and dark themes, all defined as CSS custom properties in [`src/styles/tokens.css`](src/styles/tokens.css).
+- **Theme.** The Harbour palette: cobalt brand colour, saffron accent and mist neutrals, with cobalt-to-cerulean gradients. Dark is the default; light is a toggle away. Comfortable density and soft corners. All defined as CSS custom properties in [`src/styles/tokens.css`](src/styles/tokens.css), and every pairing passes WCAG 2.2 AA in both themes.
 - **Fonts.** Inter (UI and body), Plus Jakarta Sans (headings) and JetBrains Mono (code), self-hosted through Fontsource.
-- **Form controls.** `Button`, `IconButton`, `TextField`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`/`Radio`, `Switch`, `Slider`, `Fieldset`, `Field`, `Alert`.
+- **Form controls.** `Button`, `IconButton`, `TextField`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`/`Radio`, `Switch`, `Slider`, `Fieldset`, `Field`, `Alert`, `Banner`, `Meter`.
 - **Layout.** `Stack`, `Inline`, `Grid`/`GridItem`, `Container`, `Card`, `Divider`, `AppShell`/`NavItem`.
 - **Typography.** `Heading`, `Text`.
-- **Theming.** `ThemeProvider` (`light` | `dark` | `system`).
+- **Theming.** `ThemeProvider` (`dark` by default, or `light` | `system`).
 
 ## Using it in an app
 
@@ -30,7 +30,7 @@ import '@aaronherbert/design-system/fonts.css';
 import '@aaronherbert/design-system/styles.css';
 import { ThemeProvider, TextField, Button, Stack } from '@aaronherbert/design-system';
 
-<ThemeProvider theme="system">
+<ThemeProvider>
   <Stack gap={4}>
     <TextField label="Email" type="email" />
     <Button>Continue</Button>

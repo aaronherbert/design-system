@@ -1,0 +1,121 @@
+/* ---- Banner ---- */
+.ds-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4);
+  padding: var(--ds-card-pad);
+  border-radius: var(--ds-radius-lg);
+  border: 1px solid var(--ds-color-border);
+  background-color: var(--ds-color-primary-subtle);
+  color: var(--ds-color-text);
+}
+
+/* Brand: deep gradient with white text. Every stop is checked for 4.5:1 in Tide Theme Lab. */
+.ds-banner--brand {
+  --ds-meter-track: rgb(255 255 255 / 0.22);
+  border-color: transparent;
+  background-color: var(--ds-cobalt-800);
+  background-image: var(--ds-gradient-banner, none);
+  color: var(--ds-color-on-banner-muted, #fff);
+}
+
+.ds-banner--subtle {
+  background-image: linear-gradient(135deg in oklch, var(--ds-color-primary-subtle), var(--ds-color-accent-subtle));
+}
+
+.ds-banner__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+}
+
+.ds-banner__text {
+  flex: 1 1 16rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  min-width: 0;
+}
+
+.ds-banner__title {
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-bold);
+  line-height: var(--ds-leading-snug);
+}
+
+.ds-banner--brand .ds-banner__title {
+  color: var(--ds-color-on-banner, #fff);
+}
+
+.ds-banner--subtle .ds-banner__title {
+  color: var(--ds-color-text);
+}
+
+.ds-banner__body {
+  font-size: var(--ds-text-sm);
+}
+
+.ds-banner__action {
+  flex: none;
+}
+
+/* Any Tide button placed in a brand banner becomes an outlined button that reads on the gradient. */
+.ds-banner--brand .ds-button {
+  background: transparent;
+  background-image: none;
+  border-color: currentColor;
+  color: var(--ds-color-on-banner, #fff);
+  box-shadow: none;
+}
+
+.ds-banner--brand .ds-button:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.12);
+  box-shadow: none;
+}
+
+.ds-banner--brand .ds-button:focus-visible {
+  outline-color: var(--ds-color-on-banner, #fff);
+}
+
+/* ---- Meter ---- */
+.ds-meter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+}
+
+.ds-meter__head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-space-2);
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+}
+
+.ds-meter__value {
+  font-variant-numeric: tabular-nums;
+}
+
+.ds-meter__track {
+  height: 8px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-meter-track, var(--ds-color-surface-sunken));
+  overflow: hidden;
+}
+
+.ds-meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--ds-color-primary);
+  background-image: var(--ds-gradient-primary, none);
+  transition: width var(--ds-duration-normal) var(--ds-ease);
+}
+
+.ds-banner--brand .ds-meter__fill {
+  background-color: var(--ds-color-accent);
+  background-image: var(--ds-gradient-meter, none);
+}
