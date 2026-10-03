@@ -19,6 +19,8 @@ Look in `package.json` for `@aaronherbert/design-system`. If it's missing, insta
 npm install github:aaronherbert/design-system
 ```
 
+npm 11 may warn that the package "has install scripts not yet covered by allowScripts". The install still includes the built files. To be sure, confirm that `node_modules/@aaronherbert/design-system/dist/index.js` exists. To pick up a newer Tide later, run the same install command again.
+
 It needs React 18 or later. Then import the two stylesheets once, at the app entry (`main.tsx`, `_app.tsx` or the root layout), and wrap the app in `ThemeProvider`:
 
 ```tsx
