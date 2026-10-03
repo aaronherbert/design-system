@@ -1,0 +1,28 @@
+.ds-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.ds-fieldset__legend {
+  padding: 0;
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-color-text);
+}
+
+.ds-fieldset__hint {
+  margin-top: var(--ds-space-1);
+}
+
+.ds-fieldset__body {
+  margin-top: var(--ds-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4);
+}
+
+.ds-fieldset__error {
+  margin-top: var(--ds-space-2);
+}

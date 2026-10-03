@@ -1,0 +1,85 @@
+.ds-slider__label {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-space-2);
+}
+
+.ds-slider__value {
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-color-text-muted);
+  font-weight: var(--ds-weight-regular);
+}
+
+.ds-slider {
+  --ds-slider-track: 6px;
+  --ds-slider-thumb: 18px;
+  appearance: none;
+  width: 100%;
+  height: var(--ds-control-h-sm);
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ds-slider:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.ds-slider:focus-visible {
+  outline: none;
+}
+
+/* Track */
+.ds-slider::-webkit-slider-runnable-track {
+  height: var(--ds-slider-track);
+  border-radius: var(--ds-radius-full);
+  background: linear-gradient(
+    to right,
+    var(--ds-color-primary) var(--ds-slider-pct, 0%),
+    var(--ds-color-surface-sunken) var(--ds-slider-pct, 0%)
+  );
+  box-shadow: inset 0 0 0 1px var(--ds-color-border);
+}
+
+.ds-slider::-moz-range-track {
+  height: var(--ds-slider-track);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-color-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--ds-color-border);
+}
+
+.ds-slider::-moz-range-progress {
+  height: var(--ds-slider-track);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-color-primary);
+}
+
+/* Thumb */
+.ds-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--ds-slider-thumb);
+  height: var(--ds-slider-thumb);
+  margin-top: calc((var(--ds-slider-track) - var(--ds-slider-thumb)) / 2);
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--ds-color-primary);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.ds-slider::-moz-range-thumb {
+  width: var(--ds-slider-thumb);
+  height: var(--ds-slider-thumb);
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--ds-color-primary);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.ds-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ds-color-focus-ring) 35%, transparent);
+}
+
+.ds-slider:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ds-color-focus-ring) 35%, transparent);
+}

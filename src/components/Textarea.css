@@ -1,0 +1,15 @@
+.ds-textarea {
+  padding: 0;
+  align-items: stretch;
+}
+
+.ds-textarea__input {
+  padding: var(--ds-space-2) var(--ds-space-3);
+  line-height: var(--ds-leading-normal);
+  resize: vertical;
+  min-height: 5rem;
+}
+
+.ds-textarea__input--fixed {
+  resize: none;
+}

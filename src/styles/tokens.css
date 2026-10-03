@@ -1,0 +1,232 @@
+/* ==========================================================================
+   Tide design tokens
+   Layer 1: primitives (raw palette / scales). Avoid using these directly in apps.
+   Layer 2: semantic aliases (--ds-color-*). Use these; they switch per theme.
+   ========================================================================== */
+
+:root {
+  /* ---- Palette: Teal (primary brand) ---- */
+  --ds-teal-50: #effcf9;
+  --ds-teal-100: #c9f5ec;
+  --ds-teal-200: #94eadb;
+  --ds-teal-300: #58d7c5;
+  --ds-teal-400: #2bbcab;
+  --ds-teal-500: #149f91;
+  --ds-teal-600: #0e8076;
+  --ds-teal-700: #0f6660;
+  --ds-teal-800: #11524e;
+  --ds-teal-900: #124441;
+  --ds-teal-950: #032826;
+
+  /* ---- Palette: Coral (accent) ---- */
+  --ds-coral-50: #fff4f1;
+  --ds-coral-100: #ffe5de;
+  --ds-coral-200: #ffcfc2;
+  --ds-coral-300: #ffad98;
+  --ds-coral-400: #fd7f5f;
+  --ds-coral-500: #f55a35;
+  --ds-coral-600: #e23e17;
+  --ds-coral-700: #be3010;
+  --ds-coral-800: #9d2b12;
+  --ds-coral-900: #822916;
+  --ds-coral-950: #471106;
+
+  /* ---- Palette: Slate (neutrals, tinted blue-green to sit with teal) ---- */
+  --ds-slate-0: #ffffff;
+  --ds-slate-50: #f6f8f9;
+  --ds-slate-100: #edf1f3;
+  --ds-slate-200: #dbe2e6;
+  --ds-slate-300: #bcc8cf;
+  --ds-slate-400: #91a1ab;
+  --ds-slate-500: #6b7c87;
+  --ds-slate-600: #53626c;
+  --ds-slate-700: #424e57;
+  --ds-slate-800: #2c353c;
+  --ds-slate-900: #1b2227;
+  --ds-slate-950: #0f1417;
+
+  /* ---- Palette: status ---- */
+  --ds-green-50: #effaf2;
+  --ds-green-500: #22a45d;
+  --ds-green-600: #16864a;
+  --ds-green-700: #146b3e;
+  --ds-amber-50: #fff8eb;
+  --ds-amber-400: #fbbd3c;
+  --ds-amber-500: #f59f0a;
+  --ds-amber-700: #a85a06;
+  --ds-red-50: #fef2f2;
+  --ds-red-400: #f87171;
+  --ds-red-500: #e5484d;
+  --ds-red-600: #cd2b31;
+  --ds-red-700: #a61e23;
+  --ds-blue-50: #eff6ff;
+  --ds-blue-400: #60a5fa;
+  --ds-blue-600: #2463eb;
+  --ds-blue-700: #1d4fd7;
+
+  /* ---- Typography ---- */
+  --ds-font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ds-font-display: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', var(--ds-font-sans);
+  --ds-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  /* Type scale (16px base) */
+  --ds-text-xs: 0.75rem;   /* 12 */
+  --ds-text-sm: 0.875rem;  /* 14 */
+  --ds-text-md: 1rem;      /* 16 */
+  --ds-text-lg: 1.125rem;  /* 18 */
+  --ds-text-xl: 1.25rem;   /* 20 */
+  --ds-text-2xl: 1.5rem;   /* 24 */
+  --ds-text-3xl: 1.875rem; /* 30 */
+  --ds-text-4xl: 2.25rem;  /* 36 */
+  --ds-text-5xl: 3rem;     /* 48 */
+
+  --ds-weight-regular: 400;
+  --ds-weight-medium: 500;
+  --ds-weight-semibold: 600;
+  --ds-weight-bold: 700;
+
+  --ds-leading-tight: 1.2;
+  --ds-leading-snug: 1.35;
+  --ds-leading-normal: 1.5;
+
+  /* ---- Spacing (4px grid) ---- */
+  --ds-space-0: 0;
+  --ds-space-1: 0.25rem;  /* 4 */
+  --ds-space-2: 0.5rem;   /* 8 */
+  --ds-space-3: 0.75rem;  /* 12 */
+  --ds-space-4: 1rem;     /* 16 */
+  --ds-space-5: 1.25rem;  /* 20 */
+  --ds-space-6: 1.5rem;   /* 24 */
+  --ds-space-8: 2rem;     /* 32 */
+  --ds-space-10: 2.5rem;  /* 40 */
+  --ds-space-12: 3rem;    /* 48 */
+  --ds-space-16: 4rem;    /* 64 */
+
+  /* ---- Radius ---- */
+  --ds-radius-sm: 4px;
+  --ds-radius-md: 8px;
+  --ds-radius-lg: 12px;
+  --ds-radius-xl: 16px;
+  --ds-radius-full: 9999px;
+
+  /* ---- Control sizing ---- */
+  --ds-control-h-sm: 2rem;    /* 32 */
+  --ds-control-h-md: 2.5rem;  /* 40 */
+  --ds-control-h-lg: 3rem;    /* 48 */
+
+  /* ---- Motion ---- */
+  --ds-duration-fast: 120ms;
+  --ds-duration-normal: 200ms;
+  --ds-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- Layout ---- */
+  --ds-container-sm: 640px;
+  --ds-container-md: 960px;
+  --ds-container-lg: 1200px;
+  --ds-container-xl: 1440px;
+}
+
+/* ---------------- Semantic aliases: LIGHT (default) ---------------- */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --ds-color-bg: var(--ds-slate-50);
+  --ds-color-surface: var(--ds-slate-0);
+  --ds-color-surface-sunken: var(--ds-slate-100);
+  --ds-color-surface-hover: var(--ds-slate-100);
+  --ds-color-border: var(--ds-slate-200);
+  --ds-color-border-strong: var(--ds-slate-400);
+
+  --ds-color-text: var(--ds-slate-900);
+  --ds-color-text-muted: var(--ds-slate-600);
+  --ds-color-text-subtle: var(--ds-slate-500);
+  --ds-color-text-disabled: var(--ds-slate-400);
+
+  --ds-color-primary: var(--ds-teal-700);
+  --ds-color-primary-hover: var(--ds-teal-800);
+  --ds-color-primary-active: var(--ds-teal-900);
+  --ds-color-primary-subtle: var(--ds-teal-50);
+  --ds-color-primary-text: var(--ds-teal-700);
+  --ds-color-on-primary: #ffffff;
+
+  --ds-color-accent: var(--ds-coral-600);
+  --ds-color-accent-hover: var(--ds-coral-700);
+  --ds-color-accent-subtle: var(--ds-coral-50);
+  --ds-color-on-accent: #ffffff;
+
+  --ds-color-danger: var(--ds-red-600);
+  --ds-color-danger-hover: var(--ds-red-700);
+  --ds-color-danger-subtle: var(--ds-red-50);
+  --ds-color-danger-text: var(--ds-red-700);
+  --ds-color-success: var(--ds-green-600);
+  --ds-color-success-subtle: var(--ds-green-50);
+  --ds-color-success-text: var(--ds-green-700);
+  --ds-color-warning: var(--ds-amber-500);
+  --ds-color-warning-subtle: var(--ds-amber-50);
+  --ds-color-warning-text: var(--ds-amber-700);
+  --ds-color-info: var(--ds-blue-600);
+  --ds-color-info-subtle: var(--ds-blue-50);
+  --ds-color-info-text: var(--ds-blue-700);
+
+  --ds-color-focus-ring: var(--ds-teal-500);
+  --ds-color-control-bg: var(--ds-slate-0);
+  --ds-color-control-border: var(--ds-slate-300);
+  --ds-color-control-border-hover: var(--ds-slate-400);
+
+  --ds-shadow-sm: 0 1px 2px rgb(15 20 23 / 0.06);
+  --ds-shadow-md: 0 2px 4px rgb(15 20 23 / 0.06), 0 4px 12px rgb(15 20 23 / 0.08);
+  --ds-shadow-lg: 0 8px 24px rgb(15 20 23 / 0.12), 0 2px 6px rgb(15 20 23 / 0.06);
+}
+
+/* ---------------- Semantic aliases: DARK ---------------- */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --ds-color-bg: var(--ds-slate-950);
+  --ds-color-surface: var(--ds-slate-900);
+  --ds-color-surface-sunken: #0b0f11;
+  --ds-color-surface-hover: var(--ds-slate-800);
+  --ds-color-border: var(--ds-slate-800);
+  --ds-color-border-strong: var(--ds-slate-600);
+
+  --ds-color-text: var(--ds-slate-50);
+  --ds-color-text-muted: var(--ds-slate-300);
+  --ds-color-text-subtle: var(--ds-slate-400);
+  --ds-color-text-disabled: var(--ds-slate-600);
+
+  --ds-color-primary: var(--ds-teal-400);
+  --ds-color-primary-hover: var(--ds-teal-300);
+  --ds-color-primary-active: var(--ds-teal-200);
+  --ds-color-primary-subtle: color-mix(in srgb, var(--ds-teal-400) 14%, transparent);
+  --ds-color-primary-text: var(--ds-teal-300);
+  --ds-color-on-primary: var(--ds-teal-950);
+
+  --ds-color-accent: var(--ds-coral-400);
+  --ds-color-accent-hover: var(--ds-coral-300);
+  --ds-color-accent-subtle: color-mix(in srgb, var(--ds-coral-400) 14%, transparent);
+  --ds-color-on-accent: var(--ds-coral-950);
+
+  --ds-color-danger: var(--ds-red-400);
+  --ds-color-danger-hover: #fca5a5;
+  --ds-color-danger-subtle: color-mix(in srgb, var(--ds-red-500) 16%, transparent);
+  --ds-color-danger-text: #fca5a5;
+  --ds-color-success: var(--ds-green-500);
+  --ds-color-success-subtle: color-mix(in srgb, var(--ds-green-500) 16%, transparent);
+  --ds-color-success-text: #6ee7a1;
+  --ds-color-warning: var(--ds-amber-400);
+  --ds-color-warning-subtle: color-mix(in srgb, var(--ds-amber-500) 16%, transparent);
+  --ds-color-warning-text: #fcd581;
+  --ds-color-info: var(--ds-blue-400);
+  --ds-color-info-subtle: color-mix(in srgb, var(--ds-blue-600) 18%, transparent);
+  --ds-color-info-text: #93c5fd;
+
+  --ds-color-focus-ring: var(--ds-teal-300);
+  --ds-color-control-bg: var(--ds-slate-950);
+  --ds-color-control-border: var(--ds-slate-700);
+  --ds-color-control-border-hover: var(--ds-slate-500);
+
+  --ds-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --ds-shadow-md: 0 2px 4px rgb(0 0 0 / 0.3), 0 4px 12px rgb(0 0 0 / 0.35);
+  --ds-shadow-lg: 0 8px 24px rgb(0 0 0 / 0.5), 0 2px 6px rgb(0 0 0 / 0.3);
+}

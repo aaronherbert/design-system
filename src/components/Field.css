@@ -1,0 +1,125 @@
+.ds-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  min-width: 0;
+}
+
+.ds-field__label {
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text);
+  line-height: var(--ds-leading-snug);
+}
+
+.ds-field__required {
+  color: var(--ds-color-danger);
+  margin-inline-start: 0.2em;
+}
+
+.ds-field__hint {
+  font-size: var(--ds-text-sm);
+  color: var(--ds-color-text-muted);
+  line-height: var(--ds-leading-snug);
+}
+
+.ds-field__error {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  font-size: var(--ds-text-sm);
+  color: var(--ds-color-danger-text);
+  line-height: var(--ds-leading-snug);
+}
+
+.ds-field__error svg {
+  flex: none;
+}
+
+.ds-field--disabled .ds-field__label {
+  color: var(--ds-color-text-disabled);
+}
+
+/* ---- Shared control "box" used by TextField, Textarea, Select ---- */
+.ds-control {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  width: 100%;
+  min-height: var(--ds-control-h-md);
+  padding-inline: var(--ds-space-3);
+  background: var(--ds-color-control-bg);
+  border: 1px solid var(--ds-color-control-border);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-text);
+  transition:
+    border-color var(--ds-duration-fast) var(--ds-ease),
+    box-shadow var(--ds-duration-fast) var(--ds-ease);
+}
+
+.ds-control:hover {
+  border-color: var(--ds-color-control-border-hover);
+}
+
+.ds-control:focus-within {
+  border-color: var(--ds-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ds-color-focus-ring) 30%, transparent);
+}
+
+.ds-control--sm {
+  min-height: var(--ds-control-h-sm);
+  padding-inline: var(--ds-space-2);
+  font-size: var(--ds-text-sm);
+  border-radius: var(--ds-radius-sm);
+}
+
+.ds-control--lg {
+  min-height: var(--ds-control-h-lg);
+  padding-inline: var(--ds-space-4);
+  font-size: var(--ds-text-lg);
+}
+
+.ds-control--invalid,
+.ds-control--invalid:hover {
+  border-color: var(--ds-color-danger);
+}
+
+.ds-control--invalid:focus-within {
+  border-color: var(--ds-color-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ds-color-danger) 25%, transparent);
+}
+
+.ds-control--disabled,
+.ds-control--disabled:hover {
+  background: var(--ds-color-surface-sunken);
+  border-color: var(--ds-color-border);
+  color: var(--ds-color-text-disabled);
+  cursor: not-allowed;
+}
+
+.ds-control__input {
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
+.ds-control__input::placeholder {
+  color: var(--ds-color-text-subtle);
+  opacity: 1;
+}
+
+.ds-control__input:disabled {
+  cursor: not-allowed;
+}
+
+.ds-control__adornment {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ds-color-text-subtle);
+  flex: none;
+}

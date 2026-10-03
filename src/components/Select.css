@@ -1,0 +1,39 @@
+.ds-select {
+  position: relative;
+  padding: 0;
+}
+
+.ds-select__input {
+  appearance: none;
+  height: 100%;
+  padding-inline: var(--ds-space-3) var(--ds-space-8);
+  cursor: pointer;
+}
+
+.ds-control--sm .ds-select__input {
+  padding-inline: var(--ds-space-2) var(--ds-space-6);
+}
+
+.ds-control--lg .ds-select__input {
+  padding-inline: var(--ds-space-4) var(--ds-space-10);
+}
+
+.ds-select__input:invalid {
+  color: var(--ds-color-text-subtle);
+}
+
+.ds-select__input option {
+  color: var(--ds-color-text);
+  background: var(--ds-color-surface);
+}
+
+.ds-select__chevron {
+  position: absolute;
+  right: var(--ds-space-3);
+  pointer-events: none;
+  color: var(--ds-color-text-muted);
+}
+
+.ds-control--sm .ds-select__chevron {
+  right: var(--ds-space-2);
+}

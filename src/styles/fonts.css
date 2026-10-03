@@ -1,0 +1,5 @@
+/* Self-hosted variable fonts. Shipped unbundled so your app's bundler resolves
+   the @fontsource packages and the browser only downloads the subsets it needs. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/jetbrains-mono';
