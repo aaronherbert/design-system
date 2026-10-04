@@ -21,6 +21,13 @@ const preview: Preview = {
   initialGlobals: { theme: 'dark' },
   parameters: {
     layout: 'fullscreen',
+    // Chromatic snapshots every story once per theme, so the visual review covers dark and light.
+    chromatic: {
+      modes: {
+        dark: { theme: 'dark' },
+        light: { theme: 'light' },
+      },
+    },
     controls: { matchers: { color: /(background|color)$/i } },
     options: {
       storySort: { order: ['Introduction', 'Foundations', 'Form controls', 'Layout', 'Examples'] },

@@ -1,0 +1,38 @@
+name: Visual review (Chromatic)
+
+# Snapshots every story in dark and light and diffs them against the accepted baseline.
+# Visual changes on a PR show up as a pending "UI Tests" check with a link to Chromatic's
+# side-by-side diff; accept or deny them there. Pushes to main accept automatically, so
+# merged work becomes the new baseline.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Chromatic needs git history to find the baseline and for TurboSnap
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: chromaui/action@v18
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build-storybook
+          onlyChanged: true # TurboSnap: only snapshot stories affected by the change
+          exitZeroOnChanges: true # the review happens in Chromatic, not by failing this job
+          autoAcceptChanges: main
