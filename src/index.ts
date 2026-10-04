@@ -18,6 +18,7 @@ export * from './components/TagInput';
 export * from './components/TreeView';
 export * from './components/Dialog';
 export * from './components/Toast';
+export * from './components/ProgressBar';
 export * from './components/Typography';
 
 export * from './layout/Stack';

@@ -1,0 +1,121 @@
+.ds-progress {
+  --ds-progress-height: var(--ds-space-2);
+  --ds-progress-fill: var(--ds-color-primary);
+  --ds-progress-fill-image: var(--ds-gradient-primary, none);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  min-width: 0;
+}
+
+.ds-progress--sm {
+  --ds-progress-height: 6px;
+}
+
+.ds-progress--success {
+  --ds-progress-fill: var(--ds-color-success);
+  --ds-progress-fill-image: none;
+}
+
+.ds-progress--danger {
+  --ds-progress-fill: var(--ds-color-danger);
+  --ds-progress-fill-image: none;
+}
+
+.ds-progress__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--ds-space-3);
+  font-size: var(--ds-text-sm);
+  line-height: var(--ds-leading-tight);
+}
+
+.ds-progress__label {
+  min-width: 0;
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text);
+}
+
+.ds-progress__value {
+  flex: none;
+  margin-inline-start: auto;
+  color: var(--ds-color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ds-progress__hint {
+  margin: 0;
+  font-size: var(--ds-text-sm);
+  color: var(--ds-color-text-muted);
+}
+
+.ds-progress--danger .ds-progress__hint {
+  color: var(--ds-color-danger-text);
+}
+
+/* The native <progress>, restyled. The track border meets 3:1 against the surface, like a text field. */
+.ds-progress__bar {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  box-sizing: content-box;
+  width: 100%;
+  height: var(--ds-progress-height);
+  margin: 0;
+  border: 1px solid var(--ds-color-control-border);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-color-control-bg);
+  color: var(--ds-progress-fill);
+  overflow: hidden;
+}
+
+.ds-progress__bar::-webkit-progress-bar {
+  background: transparent;
+}
+
+.ds-progress__bar::-webkit-progress-value {
+  border-radius: var(--ds-radius-full);
+  background-color: var(--ds-progress-fill);
+  background-image: var(--ds-progress-fill-image);
+  transition: inline-size var(--ds-duration-normal) var(--ds-ease);
+}
+
+.ds-progress__bar::-moz-progress-bar {
+  border-radius: var(--ds-radius-full);
+  background-color: var(--ds-progress-fill);
+  background-image: var(--ds-progress-fill-image);
+}
+
+/* Indeterminate: a segment slides across the track. */
+.ds-progress__bar:indeterminate {
+  background: linear-gradient(var(--ds-progress-fill), var(--ds-progress-fill)) no-repeat var(--ds-color-control-bg);
+  background-size: 40% 100%;
+  animation: ds-progress-slide 1.4s var(--ds-ease) infinite;
+}
+
+.ds-progress__bar:indeterminate::-moz-progress-bar {
+  background: transparent;
+}
+
+@keyframes ds-progress-slide {
+  from {
+    background-position: -67% 0;
+  }
+  to {
+    background-position: 167% 0;
+  }
+}
+
+/* No sliding with reduced motion: show static stripes across the whole track so it can't be mistaken for 40%. */
+@media (prefers-reduced-motion: reduce) {
+  .ds-progress__bar:indeterminate {
+    animation: none;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--ds-progress-fill) 0 6px,
+        transparent 6px 12px
+      )
+      var(--ds-color-control-bg);
+  }
+}

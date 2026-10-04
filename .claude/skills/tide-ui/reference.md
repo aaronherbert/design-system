@@ -43,6 +43,7 @@ Labelled fields (`TextField`, `Textarea`, `Select`, `Slider`) share **FieldBaseP
 | `ToastProvider` | Wrap the app once, inside `ThemeProvider`. `label?` (region name, default "Notifications"). |
 | `useToast()` | Returns `{ show(options) → id, dismiss(id) }`. Options: **`message`**, `action?: { label, onClick }` (e.g. Undo; clicking it also dismisses), `duration?` (ms, default 5000, `Infinity` to keep it), `tone?: 'neutral' \| 'success' \| 'danger'`. The timer pauses on hover and focus. |
 | `Meter` | **`value` and `label` (required)**, `max?` (default 100), `valueText?` (shows a label/value row and becomes `aria-valuetext`). A known range only, never indeterminate loading. |
+| `ProgressBar` | Task progress on native `<progress>`: **`label` (required)**, `value?` (omit for indeterminate), `max?` (default 100), `valueText?` (default the percentage; a string becomes `aria-valuetext`), `hint?` (linked with `aria-describedby`), `tone?: 'primary' \| 'success' \| 'danger'` (default `primary`; say "failed" or "complete" in `label`/`hint` too), `size?: 'sm' \| 'md'` (default `md`), `hideLabel?`, `fieldClassName?` (wrapper; `className` goes on the `<progress>`). Use for uploads, imports and setup steps; use `Meter` for static amounts. Ref. |
 
 ## Typography
 
