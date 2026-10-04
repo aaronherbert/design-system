@@ -10,12 +10,13 @@ Tide is the React design system (`@aaronherbert/design-system`) behind all of Aa
 ```bash
 npm run dev              # Storybook on :6006
 npm run typecheck        # tsc --noEmit (TypeScript 7)
+npm test                 # vitest: component behaviour + axe accessibility checks (src/**/*.test.tsx)
 npm run build            # library → dist/ (index.js, index.d.ts, styles.css, fonts.css)
 npm run build-storybook  # static Storybook → storybook-static/
 npm run claude:install-skill   # copy the tide-ui skill to ~/.claude/skills (do this after changing it)
 ```
 
-Before you call a change done: `typecheck`, `build` and `build-storybook` all pass, and you've looked at the affected stories in the browser in **dark and light**.
+Before you call a change done: `typecheck`, `test`, `build` and `build-storybook` all pass, and you've looked at the affected stories in the browser in **dark and light**.
 
 ## Releasing
 
@@ -27,7 +28,8 @@ Before you call a change done: `typecheck`, `build` and `build-storybook` all pa
 src/styles/tokens.css   Design tokens: palette ramps, type, spacing, radius, sizing, semantic colours, gradients
 src/styles/base.css     Base styles scoped to .ds-root (ThemeProvider)
 src/styles/fonts.css    Fontsource imports, shipped unbundled as dist/fonts.css
-src/components/         Controls, feedback and typography: Component.tsx + Component.css + Component.stories.tsx
+src/components/         Controls, feedback and typography: Component.tsx + .css + .stories.tsx + .test.tsx
+src/test/               Vitest setup (dialog polyfill) and expectNoAxeViolations()
 src/layout/             Stack, Grid, Container, Card, AppShell (+ Layout.css, AppShell.css, Layout.stories.tsx)
 src/stories/            Introduction.mdx, Foundations (colours, type, gradients, spacing), Examples (full pages)
 src/index.ts            Public API: every export must be listed here

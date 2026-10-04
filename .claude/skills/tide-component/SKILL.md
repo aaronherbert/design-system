@@ -62,6 +62,14 @@ export const Thing = forwardRef<HTMLDivElement, ThingProps>(function Thing(
 - A `Playground` story, then one story each for variants, sizes and states (error, disabled, loading, empty, long content).
 - If it fits a full page, use it in `src/stories/Examples.stories.tsx` too.
 
+## 4b. Tests
+
+`src/components/Thing.test.tsx` (Vitest + Testing Library, jsdom):
+- Query by role and accessible name (`getByRole('combobox', { name: 'Tags' })`), never by class.
+- Cover keyboard behaviour and every callback, with `@testing-library/user-event`.
+- End with `await expectNoAxeViolations(container)` from `src/test/axe.ts`, in each meaningful state (closed and open, with an error, and so on).
+- jsdom has no layout and no `<dialog>` behaviour (`src/test/setup.ts` stubs `showModal`), so check visuals in Storybook instead.
+
 ## 5. Export and document
 
 1. Add `export * from './components/Thing';` to `src/index.ts`.
@@ -72,7 +80,7 @@ export const Thing = forwardRef<HTMLDivElement, ThingProps>(function Thing(
 ## 6. Verify
 
 ```bash
-npm run typecheck && npm run build && npm run build-storybook
+npm run typecheck && npm test && npm run build && npm run build-storybook
 ```
 
 Then serve the build (`npx http-server storybook-static -p 6007 -s -c-1`) and check the stories:

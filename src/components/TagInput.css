@@ -1,0 +1,60 @@
+.ds-tag-input {
+  position: relative;
+  flex-wrap: wrap;
+  gap: var(--ds-space-1);
+  padding-block: var(--ds-space-1);
+  cursor: text;
+}
+
+.ds-tag-input__tags {
+  display: contents;
+  list-style: none;
+}
+
+.ds-tag-input__tags > li {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.ds-tag-input__input {
+  flex: 1 1 8rem;
+  min-height: var(--ds-space-8);
+}
+
+.ds-tag-input__listbox {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + var(--ds-space-1));
+  left: 0;
+  right: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--ds-space-1);
+  list-style: none;
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border-strong);
+  border-radius: var(--ds-radius-md);
+  box-shadow: var(--ds-shadow-md);
+}
+
+.ds-tag-input__listbox[hidden] {
+  display: none;
+}
+
+.ds-tag-input__option {
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border-radius: var(--ds-radius-sm);
+  font-size: var(--ds-text-sm);
+  color: var(--ds-color-text);
+  cursor: pointer;
+}
+
+.ds-tag-input__option[aria-selected='true'] {
+  background: var(--ds-color-primary-subtle);
+  color: var(--ds-color-primary-text);
+}
+
+.ds-tag-input__option--create {
+  font-style: italic;
+}
