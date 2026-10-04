@@ -75,6 +75,19 @@ The publish workflow checks that the tag matches `package.json`, type-checks, bu
 
 One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
+## Visual review on pull requests (Chromatic)
+
+[`.github/workflows/chromatic.yml`](.github/workflows/chromatic.yml) uploads Storybook to [Chromatic](https://www.chromatic.com) on every pull request and snapshots each story in **dark and light**. If anything looks different from `main`, the PR gets a pending **UI Tests** check. Click its **Details** link to see each change side by side (or as a highlighted diff), then **Accept** or **Deny** it. The check turns green once every change is accepted. Pushes to `main` are accepted automatically and become the new baseline.
+
+One-time setup:
+
+1. Sign in at [chromatic.com](https://www.chromatic.com) with GitHub and add `aaronherbert/design-system` as a project. Install the Chromatic GitHub app when it asks; the app posts the **UI Tests** check.
+2. Copy the project token into **Settings → Secrets and variables → Actions** as `CHROMATIC_PROJECT_TOKEN`.
+3. Merge this workflow and let it run once on `main` to create the baseline.
+4. To make review mandatory: **Settings → Branches → Add rule for `main` → Require status checks to pass**, then choose **UI Tests** (and **UI Review** if you want a review of every PR, not just ones with visual changes).
+
+TurboSnap (`onlyChanged`) only snapshots stories affected by a change, which keeps usage well inside the free plan. A change to `tokens.css` or `.storybook/` still snapshots everything.
+
 ## Claude Code
 
 - [`CLAUDE.md`](CLAUDE.md) and [`.claude/skills/tide-component`](.claude/skills/tide-component/SKILL.md) guide Claude when working on this repo.

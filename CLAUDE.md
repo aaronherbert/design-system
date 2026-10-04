@@ -3,6 +3,7 @@
 Tide is the React design system (`@aaronherbert/design-system`) behind all of Aaron's React apps. A change here reaches every app that uses it, so keep the API stable and keep every visual change accessible.
 
 - Storybook: https://aaronherbert.github.io/design-system/ (deployed by `.github/workflows/storybook.yml` on push to `main`)
+- Visual review: `.github/workflows/chromatic.yml` snapshots every story in dark and light on each PR. Changed snapshots leave a pending **UI Tests** check that Aaron accepts in Chromatic. New stories get snapshotted automatically; to skip a story that can't render stably, set `parameters: { chromatic: { disableSnapshot: true } }`.
 - Published to GitHub Packages (`https://npm.pkg.github.com`) by `.github/workflows/publish.yml` when a `v*` tag is pushed. Apps install it with an `.npmrc` scope line plus a user-level token (see README). `prepare` builds `dist/`, which isn't committed.
 
 ## Commands
