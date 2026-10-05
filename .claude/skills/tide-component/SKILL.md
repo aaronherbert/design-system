@@ -90,3 +90,5 @@ Then serve the build (`npx http-server storybook-static -p 6007 -s -c-1`) and ch
 - with no console errors
 
 Changing an existing prop name or default breaks every app that uses Tide. Avoid it. If you must, keep the old prop working, and say so clearly in the commit message.
+
+Merging to `main` publishes a release automatically. Label the PR `release:minor` for a new component, prop or token, `release:major` for a breaking change, or `release:skip` to hold it. With no label it's a patch. Tell the user which label you picked.

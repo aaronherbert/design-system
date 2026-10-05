@@ -62,12 +62,18 @@ import { ThemeProvider, TextField, Button, Stack } from '@aaronherbert/design-sy
 
 ## Releasing
 
-```bash
-npm version minor        # or patch / major: bumps package.json, commits and tags vX.Y.Z
-git push --follow-tags   # the tag triggers .github/workflows/publish.yml
-```
+Merging a pull request that changes the package publishes a new version automatically. [`.github/workflows/release.yml`](.github/workflows/release.yml) type-checks, tests, bumps `package.json`, pushes a `Release vX.Y.Z` commit and tag to `main`, then runs [`publish.yml`](.github/workflows/publish.yml) to build and publish to GitHub Packages. Changes that only touch stories, tests, docs or CI don't release.
 
-The publish workflow checks that the tag matches `package.json`, type-checks, builds and publishes to GitHub Packages. Use semantic versioning: patch for fixes, minor for new components or props, major for anything that breaks an app (a renamed prop, a removed token).
+Label the PR to choose the version (semantic versioning):
+
+| Label | Bump | For |
+| --- | --- | --- |
+| *(none)* | patch | fixes |
+| `release:minor` | minor | new components, props or tokens |
+| `release:major` | major | anything that breaks an app (a renamed prop, a removed token) |
+| `release:skip` | none | hold this merge back |
+
+If `main` has a branch rule that requires pull requests, allow GitHub Actions to bypass it, or the release commit can't be pushed. To re-publish a tag by hand, run **Publish to GitHub Packages** from the Actions tab on that tag.
 
 ## Deploying Storybook to GitHub Pages
 

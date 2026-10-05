@@ -1,10 +1,17 @@
 name: Publish to GitHub Packages
 
-# Release: bump the version with `npm version patch|minor|major`, then `git push --follow-tags`.
+# Called by release.yml after it bumps and tags a version on main.
+# Pushing a v* tag by hand, or running this manually on a tag, also publishes (a fallback if a release half-fails).
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: The tag to publish, e.g. v0.2.0
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -15,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -23,11 +32,13 @@ jobs:
           scope: '@aaronherbert'
       - run: npm ci
       - name: Check the tag matches package.json
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(inputs.ref || github.ref_name, 'v')
+        env:
+          TAG: ${{ inputs.ref || github.ref_name }}
         run: |
           expected="v$(node -p "require('./package.json').version")"
-          if [ "$expected" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version ($expected)"
+          if [ "$expected" != "$TAG" ]; then
+            echo "::error::Tag $TAG does not match package.json version ($expected)"
             exit 1
           fi
       - run: npm run typecheck

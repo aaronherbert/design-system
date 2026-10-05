@@ -1,0 +1,95 @@
+name: Release
+
+# Every merge to main that changes the published package bumps the version, tags it and publishes it.
+# The bump is a patch unless the merged PR is labelled release:minor or release:major; release:skip holds it back.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - '!src/stories/**'
+      - '!src/test/**'
+      - '!src/**/*.stories.tsx'
+      - '!src/**/*.test.tsx'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump (label reads the last merged PR's label)
+        type: choice
+        options: [label, patch, minor, major]
+        default: label
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+  packages: write
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Choose the bump from the merged PR's labels
+        id: bump
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHOSEN: ${{ inputs.bump }}
+        run: |
+          if [ -n "$CHOSEN" ] && [ "$CHOSEN" != label ]; then
+            echo "bump=$CHOSEN" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          labels="$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '.[0].labels[].name' || true)"
+          echo "PR labels: ${labels:-none}"
+          bump=patch
+          if grep -qx 'release:skip' <<<"$labels"; then bump=skip
+          elif grep -qx 'release:major' <<<"$labels"; then bump=major
+          elif grep -qx 'release:minor' <<<"$labels"; then bump=minor
+          fi
+          echo "Bump: $bump"
+          echo "bump=$bump" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        if: steps.bump.outputs.bump != 'skip'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - if: steps.bump.outputs.bump != 'skip'
+        run: npm ci
+      - if: steps.bump.outputs.bump != 'skip'
+        run: npm run typecheck
+      - if: steps.bump.outputs.bump != 'skip'
+        run: npm test
+
+      - name: Bump, commit, tag and push
+        id: tag
+        if: steps.bump.outputs.bump != 'skip'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          tag="$(npm version "${{ steps.bump.outputs.bump }}" -m 'Release v%s')"
+          git push --follow-tags origin HEAD:main
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  # A tag pushed with GITHUB_TOKEN doesn't start other workflows, so publish is called directly.
+  publish:
+    needs: version
+    if: needs.version.outputs.tag != ''
+    uses: ./.github/workflows/publish.yml
+    with:
+      ref: ${{ needs.version.outputs.tag }}
+    permissions:
+      contents: read
+      packages: write

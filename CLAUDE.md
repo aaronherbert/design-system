@@ -21,7 +21,14 @@ Before you call a change done: `typecheck`, `test`, `build` and `build-storybook
 
 ## Releasing
 
-`npm version patch|minor|major` (commits and tags), then `git push --follow-tags`. Patch is for fixes, minor for new components, props or tokens, and major for anything that breaks an app (renamed or removed props or tokens, changed defaults). Only release when the user asks. Publishing is public and versions can't be reused.
+Releases are automatic. When a PR that changes the package (`src/`, other than stories and tests, or `package.json`/`package-lock.json`) merges to `main`, `.github/workflows/release.yml` runs `npm version`, pushes the `Release vX.Y.Z` commit and tag, and calls `publish.yml`. The PR's label picks the bump:
+
+- no label: **patch** (fixes)
+- `release:minor`: new components, props or tokens
+- `release:major`: anything that breaks an app (renamed or removed props or tokens, changed defaults)
+- `release:skip`: don't release this merge
+
+When you open a PR, pick the label and tell the user which one you chose. Publishing is public and versions can't be reused, so get the label right before merging. Don't run `npm version` by hand.
 
 ## Layout
 
